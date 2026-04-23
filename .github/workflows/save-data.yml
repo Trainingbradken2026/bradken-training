@@ -2,14 +2,19 @@ name: Save Data
 on:
   repository_dispatch:
     types: [save-data]
+permissions:
+  contents: write
 jobs:
   save:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.DATA_TOKEN }}
       - name: Write data
-        run: echo '${{ github.event.client_payload.data }}' > data.json
-      - name: Commit
+        run: |
+          echo '${{ github.event.client_payload.data }}' > data.json
+      - name: Commit and push
         run: |
           git config user.email "training@bradken.com"
           git config user.name "Bradken Training"
