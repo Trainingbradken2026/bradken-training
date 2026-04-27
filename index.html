@@ -353,7 +353,7 @@ var PERSONAS = [
   {name:'Pedro Quispe',empId:'EMP-010',area:'Fundicion',bg:'#E0E7FF',fc:'#4338CA',cursos:['TRN-1005','TRN-1006']},
   {name:'Luis Flores',empId:'EMP-011',area:'Fundicion',bg:'#FCE7F3',fc:'#BE185D',cursos:['TRN-1005']}
 ];
-
+ 
 function ini(n){return n.split(' ').map(function(x){return x[0];}).join('').slice(0,2).toUpperCase();}
 function fmtDate(r){if(!r)return '-';var d=new Date(r+'T12:00:00');var m=['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];return d.getDate()+' '+m[d.getMonth()]+' '+d.getFullYear();}
 function badge(s){var m={realizado:'Realizado',programado:'Programado',reprogramado:'Reprogramado',cancelado:'Cancelado'};return '<span class="badge '+s+'">'+(m[s]||s)+'</span>';}
@@ -373,7 +373,7 @@ function sortS(list){
     return new Date(b.dateRaw)-new Date(a.dateRaw);
   });
 }
-
+ 
 function showView(v){
   ['cursos','detalle','catalogo','instructores','historial','personas'].forEach(function(x){document.getElementById('view-'+x).classList.add('hidden');});
   document.getElementById('view-'+v).classList.remove('hidden');
@@ -383,9 +383,9 @@ function showView(v){
   if(v==='catalogo')renderCatalog();
   if(v==='instructores')renderInstructors();
 }
-
+ 
 var currentEditSid='', editSt='';
-
+ 
 function buildTimeOptions(sel){
   var opts='';
   for(var h=6;h<=22;h++){
@@ -413,7 +413,7 @@ function getTime(idS,idE){
   var e=document.getElementById(idE);
   return (s&&e)?s.value+' - '+e.value:'Por confirmar';
 }
-
+ 
 function renderRow(s){
   // Always sync count from real participant list
   s.inscritos=(PARTICIPANTS[s.sid]||[]).length;
@@ -437,20 +437,20 @@ function renderRow(s){
   var db=row.querySelector('.btn-det');if(db)db.addEventListener('click',function(e){e.stopPropagation();openDetail(s.sid);});
   return row;
 }
-
+ 
 function renderCourseList(list){
   var el=document.getElementById('course-list');el.innerHTML='';
   if(!list||!list.length){el.innerHTML='<div class="empty">No se encontraron cursos.</div>';return;}
   list.forEach(function(s){el.appendChild(renderRow(s));});
   document.getElementById('nb').textContent=SESSIONS.length;
 }
-
+ 
 function delSession(sid){
   if(!confirm('Eliminar esta sesion?'))return;
   SESSIONS=SESSIONS.filter(function(s){return s.sid!==sid;});
   renderCourseList(sortS());
 }
-
+ 
 function openEdit(sid){
   var s=SESSIONS.find(function(x){return x.sid===sid;});
   var c=getCat(s.catId);
@@ -482,7 +482,7 @@ function openEdit(sid){
   document.getElementById('modal-save').addEventListener('click',saveEdit);
   document.getElementById('overlay').classList.remove('hidden');
 }
-
+ 
 function saveEdit(){
   var s=SESSIONS.find(function(x){return x.sid===currentEditSid;});
   s.status=editSt;
@@ -495,7 +495,7 @@ function saveEdit(){
   s.hh=hh?parseInt(hh):null;
   closeModal();renderCourseList(sortS());
 }
-
+ 
 function openNewCourse(){
   var co='<option value="">-- Selecciona un curso --</option>'+CATALOG.map(function(c){return '<option value="'+c.id+'">'+c.id+' - '+c.name+'</option>';}).join('');
   var io='<option value="">-- Selecciona un instructor --</option>'+INSTRUCTORS.map(function(i){return '<option value="'+i.name+'">'+i.name+' - '+i.role+'</option>';}).join('');
@@ -512,7 +512,7 @@ function openNewCourse(){
   document.getElementById('modal-save').addEventListener('click',saveNewCourse);
   document.getElementById('overlay').classList.remove('hidden');
 }
-
+ 
 function saveNewCourse(){
   var catId=document.getElementById('nc-c').value;
   var inst=document.getElementById('nc-i').value;
@@ -521,7 +521,7 @@ function saveNewCourse(){
   SESSIONS.push({sid:nextSid(),catId:catId,instructor:inst,status:'programado',dateRaw:fecha,time:getTime('nc-ts','nc-te'),lugar:document.getElementById('nc-l').value||'Por confirmar',inscritos:0,hh:null});
   closeModal();renderCourseList(sortS());
 }
-
+ 
 function renderDetailParticipants(sid){
   var s=SESSIONS.find(function(x){return x.sid===sid;});
   var pts=PARTICIPANTS[sid]||[];
@@ -566,7 +566,7 @@ function renderDetailParticipants(sid){
     tbody.appendChild(tr);
   });
 }
-
+ 
 function openDetail(sid){
   var s=SESSIONS.find(function(x){return x.sid===sid;});
   var c=getCat(s.catId); var p=getPilar(c.pilar);
@@ -597,7 +597,7 @@ function openDetail(sid){
   renderDetailParticipants(sid);
   showView('detalle');
 }
-
+ 
 function openEnroll(sid){
   var s=SESSIONS.find(function(x){return x.sid===sid;});
   var c=getCat(s.catId);
@@ -615,7 +615,7 @@ function openEnroll(sid){
   document.getElementById('modal-enroll').addEventListener('click',function(){confirmEnroll(sid);});
   document.getElementById('overlay').classList.remove('hidden');
 }
-
+ 
 function confirmEnroll(sid){
   var name=document.getElementById('f-n').value.trim();
   var empId=document.getElementById('f-id').value.trim();
@@ -631,7 +631,7 @@ function confirmEnroll(sid){
   document.getElementById('modal-box').innerHTML='<div class="swrap"><div class="sico"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div><h3 style="font-size:17px;font-weight:600;margin-bottom:6px">Inscripcion confirmada!</h3><p style="font-size:13px;color:var(--t2);margin-bottom:22px">'+name+' fue inscrito/a en <strong>'+(c.name||sid)+'</strong>.</p><button class="bconfirm" id="modal-done" style="width:180px;margin:0 auto;display:block">Listo</button></div>';
   document.getElementById('modal-done').addEventListener('click',closeModal);
 }
-
+ 
 function renderCatalog(){
   var grid=document.getElementById('catalog-grid');
   grid.innerHTML='';
@@ -655,7 +655,7 @@ function renderCatalog(){
     grid.appendChild(card);
   });
 }
-
+ 
 function openEditCatalog(idx){
   var c=CATALOG[idx];
   var po=Object.keys(PILARES).map(function(p){return '<option'+(p===c.pilar?' selected':'')+'>'+p+'</option>';}).join('');
@@ -681,7 +681,7 @@ function openEditCatalog(idx){
   });
   document.getElementById('overlay').classList.remove('hidden');
 }
-
+ 
 function openAddCatalog(){
   var po=Object.keys(PILARES).map(function(p){return '<option>'+p+'</option>';}).join('');
   document.getElementById('modal-box').innerHTML=
@@ -702,7 +702,7 @@ function openAddCatalog(){
   });
   document.getElementById('overlay').classList.remove('hidden');
 }
-
+ 
 function renderInstructors(){
   var grid=document.getElementById('inst-grid');
   grid.innerHTML='';
@@ -727,7 +727,7 @@ function renderInstructors(){
     grid.appendChild(card);
   });
 }
-
+ 
 function openEditInstructor(idx){
   var inst=INSTRUCTORS[idx];
   var po=Object.keys(PILARES).map(function(p){return '<option'+(p===inst.pilar?' selected':'')+'>'+p+'</option>';}).join('');
@@ -748,7 +748,7 @@ function openEditInstructor(idx){
   });
   document.getElementById('overlay').classList.remove('hidden');
 }
-
+ 
 function openAddInstructor(){
   var po=Object.keys(PILARES).map(function(p){return '<option>'+p+'</option>';}).join('');
   document.getElementById('modal-box').innerHTML=
@@ -768,7 +768,7 @@ function openAddInstructor(){
   });
   document.getElementById('overlay').classList.remove('hidden');
 }
-
+ 
 function renderHistorial(filtro){
   var list=filtro==='todos'?SESSIONS:SESSIONS.filter(function(s){return s.status===filtro;});
   var sorted=sortS(list);
@@ -796,7 +796,7 @@ function renderHistorial(filtro){
   });
   if(!sorted.length)hl.innerHTML='<div class="empty">No hay cursos con este filtro.</div>';
 }
-
+ 
 function renderPersonas(){
   // Build person list dynamically from real PARTICIPANTS data
   var personMap = {};
@@ -814,17 +814,17 @@ function renderPersonas(){
       personMap[key].sesiones.push({sid: s.sid, nombre: c.name||s.catId, status: s.status, fecha: s.dateRaw});
     });
   });
-
+ 
   var personas = Object.values(personMap);
   if(!personas.length){
     document.getElementById('personas-content').innerHTML='<div class="empty">No hay participantes registrados aun.</div>';
     return;
   }
-
+ 
   var total = personas.reduce(function(a,p){return a+p.sesiones.length;},0);
   var avg = (total/personas.length).toFixed(1);
   var top = personas.reduce(function(a,b){return a.sesiones.length>=b.sesiones.length?a:b;});
-
+ 
   var pc = document.getElementById('personas-content');
   pc.innerHTML = '<div class="s3">'
     +'<div class="scard"><div class="slbl">Personas registradas</div><div class="sval">'+personas.length+'</div><div class="ssub">con al menos 1 curso</div></div>'
@@ -851,7 +851,7 @@ function renderPersonas(){
     }).join('')
     +'</div>';
 }
-
+ 
 function exportCSV(sid){
   var s=SESSIONS.find(function(x){return x.sid===sid;});
   var c=getCat(s.catId);var pts=PARTICIPANTS[sid]||[];
@@ -861,12 +861,12 @@ function exportCSV(sid){
   var blob=new Blob(['\uFEFF'+csv],{type:'text/csv;charset=utf-8;'});
   var a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=sid+'.csv';a.click();
 }
-
+ 
 function closeModal(){document.getElementById('overlay').classList.add('hidden');}
-
+ 
 // ========== PERSISTENCIA localStorage ==========
 var STORAGE_KEY = 'bradken_training_data';
-
+ 
 function saveData(){
   try{
     localStorage.setItem(STORAGE_KEY, JSON.stringify({
@@ -878,7 +878,7 @@ function saveData(){
     }));
   } catch(e){ console.warn('Error guardando datos:', e); }
 }
-
+ 
 function loadData(){
   try{
     var raw = localStorage.getItem(STORAGE_KEY);
@@ -892,7 +892,7 @@ function loadData(){
     return true;
   } catch(e){ console.warn('Error cargando datos:', e); return false; }
 }
-
+ 
 // Wrap all mutation functions to auto-save after every change
 var _origSaveEdit=saveEdit;
 saveEdit=function(){_origSaveEdit();saveData();};
@@ -913,11 +913,11 @@ renderDetailParticipants=function(sid){
     btn.addEventListener('click',function(){saveData();},{once:true,capture:false});
   });
 };
-
+ 
 document.addEventListener('DOMContentLoaded',function(){
   // Load saved data first — if none exists, keep the default demo data
   var loaded = loadData();
-
+ 
   document.querySelectorAll('.nav-item').forEach(function(el){
     el.addEventListener('click',function(){showView(el.dataset.view);});
   });
@@ -936,7 +936,7 @@ document.addEventListener('DOMContentLoaded',function(){
     document.querySelectorAll('.fpill').forEach(function(b){b.classList.remove('active');});
     btn.classList.add('active');renderHistorial(btn.dataset.filtro);
   });
-
+ 
   // Save after catalog and instructor edits/deletes (patched at render time)
   var _origRC=renderCatalog;
   renderCatalog=function(){
@@ -952,14 +952,14 @@ document.addEventListener('DOMContentLoaded',function(){
       btn.addEventListener('click',function(){setTimeout(saveData,100);});
     });
   };
-
+ 
   // Save after modal confirm buttons for catalog and instructor edits
   document.getElementById('overlay').addEventListener('click',function(){
     setTimeout(saveData,200);
   });
-
+ 
   renderCourseList(sortS());
-
+ 
   // Show a subtle indicator if data was loaded from storage
   if(loaded){
     var ind=document.createElement('div');
