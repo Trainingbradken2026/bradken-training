@@ -259,20 +259,69 @@ function pilarIcon(pilar,size){
   return '<div class="picon" style="width:'+sz+'px;height:'+sz+'px;background:'+p.bg+'"><svg viewBox="0 0 24 24" style="width:'+(sz*0.5)+'px;height:'+(sz*0.5)+'px" fill="none" stroke="'+p.color+'" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">'+p.p+'</svg></div>';
 }
 var CATALOG = [
-  {id:'CAP-CUL-001',name:'Taller de Liderazgo Positivo',pilar:'Cultura organizacional',dur:2},
-  {id:'CAP-CUL-002',name:'Comunicacion Efectiva en Equipos',pilar:'Cultura organizacional',dur:2},
-  {id:'CAP-CUL-003',name:'Gestion del Cambio Organizacional',pilar:'Cultura organizacional',dur:3},
-  {id:'CAP-HSE-001',name:'Induccion HSE - Sitio Chilca',pilar:'Seguridad y estabilidad operacional',dur:4},
-  {id:'CAP-HSE-002',name:'5S para Fundicion - Hierro Cromo-Molibdeno',pilar:'Seguridad y estabilidad operacional',dur:2},
-  {id:'CAP-HSE-003',name:'Gestion de Riesgos en Planta',pilar:'Seguridad y estabilidad operacional',dur:3},
-  {id:'CAP-HSE-004',name:'Simulacro de Emergencias',pilar:'Seguridad y estabilidad operacional',dur:2},
-  {id:'CAP-EXC-001',name:'Introduccion a MS Teams y Trabajo Remoto',pilar:'Excelencia Operativa',dur:3},
-  {id:'CAP-EXC-002',name:'Gestion de Proyectos Agiles',pilar:'Excelencia Operativa',dur:4},
-  {id:'CAP-EXC-003',name:'Captura de Lecciones Aprendidas',pilar:'Excelencia Operativa',dur:2},
-  {id:'CAP-EXC-004',name:'Train the Trainer - Fundicion',pilar:'Excelencia Operativa',dur:8},
-  {id:'CAP-CRE-001',name:'Planificacion Estrategica Operacional',pilar:'Crecimiento Estrategico',dur:4},
-  {id:'CAP-LID-001',name:'Desarrollo de Habilidades de Liderazgo',pilar:'Desarrollo de personas y liderazgo',dur:6},
-  {id:'CAP-LID-002',name:'Coaching para Supervisores',pilar:'Desarrollo de personas y liderazgo',dur:4}
+  {id:'CAP-CUL-001',name:'Filosofía 5S',pilar:'Cultura organizacional',dur:4},
+  {id:'CAP-CUL-002',name:'Comunicación en el Lugar de Trabajo',pilar:'Cultura organizacional',dur:3},
+  {id:'CAP-CUL-003',name:'Competencias Esenciales Bradken',pilar:'Cultura organizacional',dur:4},
+  {id:'CAP-CUL-004',name:'Respeto en el Lugar de Trabajo',pilar:'Cultura organizacional',dur:3},
+  {id:'CAP-CUL-005',name:'Las Reglas por las que Vivimos',pilar:'Cultura organizacional',dur:2},
+  {id:'CAP-CUL-006',name:'Conciencia de Salud Mental y EAP',pilar:'Cultura organizacional',dur:3},
+  {id:'CAP-CUL-007',name:'Gestión de la Salud',pilar:'Cultura organizacional',dur:3},
+  {id:'CAP-CUL-008',name:'Prevención de Riesgos Psicosociales',pilar:'Cultura organizacional',dur:3},
+  {id:'CAP-CUL-009',name:'Prevención del Acoso Sexual',pilar:'Cultura organizacional',dur:3},
+  {id:'CAP-LID-001',name:'Train the Trainer - Certificación',pilar:'Desarrollo de personas y liderazgo',dur:8},
+  {id:'CAP-LID-002',name:'Programa de Liderazgo para Trabajadores: Formando Líderes',pilar:'Desarrollo de personas y liderazgo',dur:16},
+  {id:'CAP-LID-003',name:'Comunicaciones para Líderes de Primera Línea - Módulos 1, 2 y 3',pilar:'Desarrollo de personas y liderazgo',dur:8},
+  {id:'CAP-LID-004',name:'Líderes de Primera Línea: Manejo de Conflictos y Quejas',pilar:'Desarrollo de personas y liderazgo',dur:4},
+  {id:'CAP-LID-005',name:'Liderazgo Resiliente en Proyectos',pilar:'Desarrollo de personas y liderazgo',dur:6},
+  {id:'CAP-LID-006',name:'Líder en Acción 2.0 - Módulo 1: Mentalidad de Líder y Reuniones 1:1 Efectivas',pilar:'Desarrollo de personas y liderazgo',dur:4},
+  {id:'CAP-LID-007',name:'Líder en Acción 2.0 - Módulo 2: Equipos de Alto Rendimiento y Cultura de Retroalimentación',pilar:'Desarrollo de personas y liderazgo',dur:4},
+  {id:'CAP-LID-008',name:'Líder en Acción 2.0 - Módulo 3: Liderando el Cambio y Gestión del Tiempo y Energía',pilar:'Desarrollo de personas y liderazgo',dur:4},
+  {id:'CAP-CRE-001',name:'Servicios Corporativos 101 para Líderes de Personas (Personal Administrativo)',pilar:'Crecimiento Estratégico',dur:4},
+  {id:'CAP-CRE-002',name:'Servicios Corporativos 101 para Líderes de Personas (Personal Operativo)',pilar:'Crecimiento Estratégico',dur:4},
+  {id:'CAP-CRE-003',name:'Análisis de Causa Raíz (RCA)',pilar:'Crecimiento Estratégico',dur:4},
+  {id:'CAP-CRE-004',name:'Gestión del Cambio - Sensibilización',pilar:'Crecimiento Estratégico',dur:3},
+  {id:'CAP-EXC-001',name:'Proceso de Fundición Chilca - Visión General',pilar:'Excelencia Operativa',dur:4},
+  {id:'CAP-EXC-002',name:'Verificaciones de Control Crítico CCV',pilar:'Excelencia Operativa',dur:3},
+  {id:'CAP-EXC-003',name:'Conciencia de Calidad',pilar:'Excelencia Operativa',dur:3},
+  {id:'CAP-EXC-004',name:'MyOsh - Plataforma de Seguridad',pilar:'Excelencia Operativa',dur:2},
+  {id:'CAP-EXC-005',name:'Tratamiento de Residuos Sólidos',pilar:'Excelencia Operativa',dur:2},
+  {id:'CAP-ONB-001',name:'Inducción: Administración y Compensaciones',pilar:'Cultura organizacional',dur:3},
+  {id:'CAP-ONB-002',name:'Inducción: Inclusión y Diversidad',pilar:'Cultura organizacional',dur:2},
+  {id:'CAP-ONB-003',name:'Inducción: Personas y Cultura',pilar:'Cultura organizacional',dur:3},
+  {id:'CAP-ONB-004',name:'Inducción: Bienestar Social',pilar:'Cultura organizacional',dur:2},
+  {id:'CAP-HSE-001',name:'Inducción HSE - Sitio Chilca',pilar:'Seguridad y estabilidad operacional',dur:4},
+  {id:'CAP-HSE-002',name:'Introducción a Seguridad y Sostenibilidad',pilar:'Seguridad y estabilidad operacional',dur:4},
+  {id:'CAP-HSE-003',name:'Conciencia Ambiental',pilar:'Seguridad y estabilidad operacional',dur:2},
+  {id:'CAP-HSE-004',name:'Cultura de Seguridad y Liderazgo',pilar:'Seguridad y estabilidad operacional',dur:4},
+  {id:'CAP-HSE-005',name:'Investigación de Accidentes',pilar:'Seguridad y estabilidad operacional',dur:4},
+  {id:'CAP-HSE-006',name:'Preparación y Respuesta ante Emergencias',pilar:'Seguridad y estabilidad operacional',dur:4},
+  {id:'CAP-HSE-007',name:'Certificación Equipo de Respuesta a Emergencias',pilar:'Seguridad y estabilidad operacional',dur:8},
+  {id:'CAP-HSE-008',name:'Exposición al Calor, Hidratación y Fatiga',pilar:'Seguridad y estabilidad operacional',dur:2},
+  {id:'CAP-HSE-009',name:'Calor, Fatiga y Estrés Térmico',pilar:'Seguridad y estabilidad operacional',dur:2},
+  {id:'CAP-HSE-010',name:'Exposición al Ruido y Conservación Auditiva',pilar:'Seguridad y estabilidad operacional',dur:2},
+  {id:'CAP-HSE-011',name:'Primeros Auxilios',pilar:'Seguridad y estabilidad operacional',dur:8},
+  {id:'CAP-HSE-012',name:'Manejo de Productos Químicos Peligrosos y Derrames',pilar:'Seguridad y estabilidad operacional',dur:3},
+  {id:'CAP-HSE-013',name:'Sustancias Peligrosas en Planta - Revisión de HDS',pilar:'Seguridad y estabilidad operacional',dur:2},
+  {id:'CAP-HSE-014',name:'Aislamiento de Energía (LOTOTO)',pilar:'Seguridad y estabilidad operacional',dur:4},
+  {id:'CAP-HSE-015',name:'Licencia para Conducir Montacargas',pilar:'Seguridad y estabilidad operacional',dur:8},
+  {id:'CAP-HSE-016',name:'Licencia para Plataformas Elevadoras y Tijeras',pilar:'Seguridad y estabilidad operacional',dur:8},
+  {id:'CAP-HSE-017',name:'Licencia para Andamiaje: Teoría y Práctica',pilar:'Seguridad y estabilidad operacional',dur:8},
+  {id:'CAP-HSE-018',name:'Licencia BC1 para Izaje - Operaciones de Grúa',pilar:'Seguridad y estabilidad operacional',dur:8},
+  {id:'CAP-HSE-019',name:'Licencia BC3 para Izaje - Operaciones de Grúa',pilar:'Seguridad y estabilidad operacional',dur:8},
+  {id:'CAP-HSE-020',name:'Gestión de Riesgos: JSEA / IPERC',pilar:'Seguridad y estabilidad operacional',dur:4},
+  {id:'CAP-HSE-021',name:'Permiso de Trabajo - Espacios Confinados',pilar:'Seguridad y estabilidad operacional',dur:4},
+  {id:'CAP-HSE-022',name:'Permiso de Trabajo - Trabajos Eléctricos',pilar:'Seguridad y estabilidad operacional',dur:4},
+  {id:'CAP-HSE-023',name:'Permiso de Trabajo - Excavación e Ingreso Forzado',pilar:'Seguridad y estabilidad operacional',dur:4},
+  {id:'CAP-HSE-024',name:'Permiso de Trabajo - Trabajos en Altura',pilar:'Seguridad y estabilidad operacional',dur:4},
+  {id:'CAP-HSE-025',name:'Permiso de Trabajo - Trabajos en Calor',pilar:'Seguridad y estabilidad operacional',dur:4},
+  {id:'CAP-HSE-026',name:'Permiso de Trabajo - Sensibilización General',pilar:'Seguridad y estabilidad operacional',dur:2},
+  {id:'CAP-HSE-027',name:'Prevención de Lesiones Musculoesqueléticas (Ergonomía)',pilar:'Seguridad y estabilidad operacional',dur:3},
+  {id:'CAP-HSE-028',name:'Protección contra Radiación UV',pilar:'Seguridad y estabilidad operacional',dur:2},
+  {id:'CAP-HSE-029',name:'Conciencia sobre Protección Respiratoria',pilar:'Seguridad y estabilidad operacional',dur:2},
+  {id:'CAP-HSE-030',name:'Uso y Mantenimiento de EPP',pilar:'Seguridad y estabilidad operacional',dur:2},
+  {id:'CAP-HSE-031',name:'Uso de Extintores de Incendio',pilar:'Seguridad y estabilidad operacional',dur:2},
+  {id:'CAP-HSE-032',name:'Certificación de Soldador',pilar:'Seguridad y estabilidad operacional',dur:16},
+  {id:'CAP-HSE-033',name:'Watergel: Uso y Manejo',pilar:'Seguridad y estabilidad operacional',dur:3}
 ];
 var INSTRUCTORS = [
   {name:'Antonio Vera',role:'Coordinador de Capacitaciones',pilar:'Seguridad / Calidad',bg:'#E0E7FF',fc:'#4338CA'},
@@ -749,21 +798,58 @@ function renderHistorial(filtro){
 }
 
 function renderPersonas(){
-  var total=PERSONAS.reduce(function(a,p){return a+p.cursos.length;},0);
-  var avg=(total/PERSONAS.length).toFixed(1);
-  var top=PERSONAS.reduce(function(a,b){return a.cursos.length>=b.cursos.length?a:b;});
-  var pc=document.getElementById('personas-content');
-  pc.innerHTML='<div class="s3"><div class="scard"><div class="slbl">Personas registradas</div><div class="sval">'+PERSONAS.length+'</div><div class="ssub">con al menos 1 curso</div></div>'
+  // Build person list dynamically from real PARTICIPANTS data
+  var personMap = {};
+  SESSIONS.forEach(function(s){
+    var pts = PARTICIPANTS[s.sid]||[];
+    var c = getCat(s.catId);
+    pts.forEach(function(pt){
+      var key = pt.empId;
+      if(!personMap[key]){
+        personMap[key] = {
+          name: pt.name, empId: pt.empId, area: pt.area,
+          bg: pt.bg, fc: pt.fc, sesiones: []
+        };
+      }
+      personMap[key].sesiones.push({sid: s.sid, nombre: c.name||s.catId, status: s.status, fecha: s.dateRaw});
+    });
+  });
+
+  var personas = Object.values(personMap);
+  if(!personas.length){
+    document.getElementById('personas-content').innerHTML='<div class="empty">No hay participantes registrados aun.</div>';
+    return;
+  }
+
+  var total = personas.reduce(function(a,p){return a+p.sesiones.length;},0);
+  var avg = (total/personas.length).toFixed(1);
+  var top = personas.reduce(function(a,b){return a.sesiones.length>=b.sesiones.length?a:b;});
+
+  var pc = document.getElementById('personas-content');
+  pc.innerHTML = '<div class="s3">'
+    +'<div class="scard"><div class="slbl">Personas registradas</div><div class="sval">'+personas.length+'</div><div class="ssub">con al menos 1 curso</div></div>'
     +'<div class="scard"><div class="slbl">Promedio de cursos</div><div class="sval">'+avg+'</div><div class="ssub">por persona</div></div>'
-    +'<div class="scard"><div class="slbl">Mas capacitado/a</div><div class="sval">'+top.name.split(' ')[0]+' '+top.name.split(' ')[1][0]+'.</div><div class="ssub">'+top.cursos.length+' cursos</div></div></div>'
-    +'<div class="tcard"><div class="thead" style="grid-template-columns:2fr 1fr 0.7fr 1.4fr"><span>Persona</span><span>Area</span><span>Cursos</span><span>IDs</span></div>'
-    +PERSONAS.map(function(p){
-      return '<div style="display:grid;grid-template-columns:2fr 1fr 0.7fr 1.4fr;padding:14px 20px;border-bottom:1px solid #F2F4F9;align-items:center">'
-        +'<div class="pc"><div class="pav" style="background:'+p.bg+';color:'+p.fc+';width:36px;height:36px;font-size:12px">'+ini(p.name)+'</div><div><div style="font-weight:500;font-size:13px">'+p.name+'</div><div style="font-size:11px;font-family:var(--mono);color:var(--t2)">'+p.empId+'</div></div></div>'
+    +'<div class="scard"><div class="slbl">Mas capacitado/a</div><div class="sval">'+top.name.split(' ')[0]+' '+top.name.split(' ')[1][0]+'.</div><div class="ssub">'+top.sesiones.length+' cursos</div></div>'
+    +'</div>'
+    +'<div class="tcard">'
+    +'<div class="thead" style="grid-template-columns:1.8fr 0.9fr 0.5fr 2fr"><span>Persona</span><span>Area</span><span>Cursos</span><span>Capacitaciones realizadas</span></div>'
+    +personas.map(function(p){
+      var tags = p.sesiones.map(function(s){
+        var color = s.status==='realizado' ? 'background:#ECFDF5;color:#10B981;border:1px solid #A7F3D0'
+                  : s.status==='programado' ? 'background:#EFF6FF;color:#3B82F6;border:1px solid #BFDBFE'
+                  : 'background:#FFFBEB;color:#F59E0B;border:1px solid #FDE68A';
+        return '<span style="'+color+';border-radius:6px;padding:3px 10px;font-size:11px;font-weight:500;display:inline-block;margin:2px">'+s.nombre+'</span>';
+      }).join('');
+      return '<div style="display:grid;grid-template-columns:1.8fr 0.9fr 0.5fr 2fr;padding:14px 20px;border-bottom:1px solid #F2F4F9;align-items:center">'
+        +'<div class="pc"><div class="pav" style="background:'+p.bg+';color:'+p.fc+';width:36px;height:36px;font-size:12px">'+ini(p.name)+'</div>'
+        +'<div><div style="font-weight:500;font-size:13px">'+p.name+'</div>'
+        +'<div style="font-size:11px;font-family:var(--mono);color:var(--t2)">'+p.empId+'</div></div></div>'
         +'<div style="font-size:13px;color:var(--t2)">'+p.area+'</div>'
-        +'<div style="text-align:center"><span style="background:var(--brandl);color:var(--brand);border-radius:20px;padding:3px 14px;font-size:14px;font-weight:600">'+p.cursos.length+'</span></div>'
-        +'<div>'+p.cursos.map(function(cid){return '<span class="ctag">'+cid+'</span>';}).join('')+'</div></div>';
-    }).join('')+'</div>';
+        +'<div style="text-align:center"><span style="background:var(--brandl);color:var(--brand);border-radius:20px;padding:3px 14px;font-size:14px;font-weight:600">'+p.sesiones.length+'</span></div>'
+        +'<div style="line-height:1.8">'+tags+'</div>'
+        +'</div>';
+    }).join('')
+    +'</div>';
 }
 
 function exportCSV(sid){
@@ -778,169 +864,111 @@ function exportCSV(sid){
 
 function closeModal(){document.getElementById('overlay').classList.add('hidden');}
 
-
-// ========== PERSISTENCIA GITHUB ACTIONS ==========
-var GH_USER   = 'Trainingbradken2026';
-var GH_REPO   = 'bradken-training';
-var GH_BRANCH = 'main';
-var GH_FILE   = 'data.json';
-var GH_API    = 'https://api.github.com/repos/'+GH_USER+'/'+GH_REPO+'/contents/'+GH_FILE;
-var GH_DISPATCH = 'https://api.github.com/repos/'+GH_USER+'/'+GH_REPO+'/dispatches';
-// Token split to avoid GitHub secret scanning (read-only public repo access)
-var _t1='ghp_NEW', _t2='TOKEN_HERE';  // replaced at runtime via prompt
-var _saveTimer=null;
-var _ghToken='';
-
-function getToken(){
-  if(_ghToken) return _ghToken;
-  _ghToken=localStorage.getItem('bk_gh_token')||'';
-  return _ghToken;
-}
-
-function showToast(msg,color){
-  var t=document.getElementById('gh-toast');
-  if(!t){
-    t=document.createElement('div');
-    t.id='gh-toast';
-    t.style.cssText='position:fixed;bottom:20px;right:20px;padding:10px 18px;border-radius:9px;font-size:12px;font-weight:500;color:#fff;z-index:9999;transition:opacity .6s;box-shadow:0 4px 12px rgba(0,0,0,.15)';
-    document.body.appendChild(t);
-  }
-  t.textContent=msg;
-  t.style.background=color||'#1B5CA8';
-  t.style.opacity='1';
-  clearTimeout(t._h);
-  t._h=setTimeout(function(){t.style.opacity='0';},3000);
-}
-
-function getCurrentData(){
-  return {sessions:SESSIONS,participants:PARTICIPANTS,catalog:CATALOG,instructors:INSTRUCTORS,personas:PERSONAS};
-}
+// ========== PERSISTENCIA localStorage ==========
+var STORAGE_KEY = 'bradken_training_data';
 
 function saveData(){
-  clearTimeout(_saveTimer);
-  _saveTimer=setTimeout(function(){_doSave();},1000);
+  try{
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({
+      sessions: SESSIONS,
+      participants: PARTICIPANTS,
+      catalog: CATALOG,
+      instructors: INSTRUCTORS,
+      personas: PERSONAS
+    }));
+  } catch(e){ console.warn('Error guardando datos:', e); }
 }
 
-function _doSave(){
-  var token=getToken();
-  if(!token){showToast('Token no configurado','#EF4444');return;}
-  var payload=JSON.stringify(getCurrentData());
-  showToast('Guardando...','#6B7280');
-  fetch(GH_DISPATCH,{
-    method:'POST',
-    headers:{
-      'Authorization':'token '+token,
-      'Accept':'application/vnd.github.v3+json',
-      'Content-Type':'application/json'
-    },
-    body:JSON.stringify({
-      event_type:'save-data',
-      client_payload:{data:payload}
-    })
-  }).then(function(r){
-    if(r.status===204){
-      showToast('Guardado correctamente','#10B981');
-    } else {
-      r.json().then(function(d){showToast('Error: '+(d.message||r.status),'#EF4444');});
-    }
-  }).catch(function(e){showToast('Sin conexion','#F59E0B');});
+function loadData(){
+  try{
+    var raw = localStorage.getItem(STORAGE_KEY);
+    if(!raw) return false;
+    var d = JSON.parse(raw);
+    if(d.sessions)     SESSIONS     = d.sessions;
+    if(d.participants) PARTICIPANTS = d.participants;
+    if(d.catalog)      CATALOG      = d.catalog;
+    if(d.instructors)  INSTRUCTORS  = d.instructors;
+    if(d.personas)     PERSONAS     = d.personas;
+    return true;
+  } catch(e){ console.warn('Error cargando datos:', e); return false; }
 }
 
-function loadData(callback){
-  showToast('Cargando datos...','#6B7280');
-  var token=getToken();
-  var headers={'Accept':'application/vnd.github.v3+json'};
-  if(token) headers['Authorization']='token '+token;
-  fetch(GH_API+'?t='+Date.now(),{headers:headers})
-  .then(function(r){
-    if(r.status===404){showToast('Usando datos de demo','#1B5CA8');callback(false);return null;}
-    return r.json();
-  })
-  .then(function(d){
-    if(!d) return;
-    try{
-      var content=decodeURIComponent(escape(atob(d.content.replace(/\n/g,''))));
-      var parsed=JSON.parse(content);
-      if(parsed.sessions)     SESSIONS     = parsed.sessions;
-      if(parsed.participants) PARTICIPANTS = parsed.participants;
-      if(parsed.catalog)      CATALOG      = parsed.catalog;
-      if(parsed.instructors)  INSTRUCTORS  = parsed.instructors;
-      if(parsed.personas)     PERSONAS     = parsed.personas;
-      showToast('Datos actualizados','#10B981');
-      callback(true);
-    } catch(e){showToast('Error leyendo datos','#EF4444');callback(false);}
-  })
-  .catch(function(){showToast('Sin conexion - datos locales','#F59E0B');callback(false);});
-}
-
-// Auto-save after every mutation
-var _origSaveEdit=saveEdit; saveEdit=function(){_origSaveEdit();saveData();};
-var _origSaveNewCourse=saveNewCourse; saveNewCourse=function(){_origSaveNewCourse();saveData();};
-var _origDelSession=delSession; delSession=function(sid){_origDelSession(sid);saveData();};
-var _origConfirmEnroll=confirmEnroll; confirmEnroll=function(sid){_origConfirmEnroll(sid);saveData();};
-var _origRDP=renderDetailParticipants;
+// Wrap all mutation functions to auto-save after every change
+var _origSaveEdit=saveEdit;
+saveEdit=function(){_origSaveEdit();saveData();};
+var _origSaveNewCourse=saveNewCourse;
+saveNewCourse=function(){_origSaveNewCourse();saveData();};
+var _origDelSession=delSession;
+delSession=function(sid){_origDelSession(sid);saveData();};
+var _origConfirmEnroll=confirmEnroll;
+confirmEnroll=function(sid){_origConfirmEnroll(sid);saveData();};
+var _origRenderDetailParticipants=renderDetailParticipants;
 renderDetailParticipants=function(sid){
-  _origRDP(sid);
+  _origRenderDetailParticipants(sid);
+  // Patch delete buttons to also save after deletion
   var tbody=document.getElementById('ptable-body');
   if(!tbody) return;
   tbody.querySelectorAll('.btn-del-pt').forEach(function(btn){
-    btn.addEventListener('click',function(){setTimeout(saveData,200);});
+    var orig=btn.onclick;
+    btn.addEventListener('click',function(){saveData();},{once:true,capture:false});
   });
 };
 
 document.addEventListener('DOMContentLoaded',function(){
+  // Load saved data first — if none exists, keep the default demo data
+  var loaded = loadData();
 
-  // Token setup — prompt on first use if not stored
-  if(!localStorage.getItem('bk_gh_token')){
-    var tk=prompt('Ingresa el token de acceso para guardar datos (solo se pide una vez):');
-    if(tk&&tk.trim()){
-      localStorage.setItem('bk_gh_token',tk.trim());
-      _ghToken=tk.trim();
-    }
-  }
-
-  function initUI(){
-    document.querySelectorAll('.nav-item').forEach(function(el){
-      el.addEventListener('click',function(){showView(el.dataset.view);});
-    });
-    document.getElementById('btn-nuevo').addEventListener('click',openNewCourse);
-    document.getElementById('btn-back').addEventListener('click',function(){showView('cursos');});
-    document.getElementById('btn-addcat').addEventListener('click',openAddCatalog);
-    document.getElementById('btn-addinst').addEventListener('click',openAddInstructor);
-    document.getElementById('overlay').addEventListener('click',function(e){if(e.target===this)closeModal();});
-    document.getElementById('search-input').addEventListener('input',function(){
-      var q=this.value.toLowerCase();
-      var f=SESSIONS.filter(function(s){var c=getCat(s.catId);return (c.name||'').toLowerCase().includes(q)||s.sid.toLowerCase().includes(q);});
-      renderCourseList(sortS(f));
-    });
-    document.getElementById('hist-pills').addEventListener('click',function(e){
-      var btn=e.target.closest('.fpill');if(!btn)return;
-      document.querySelectorAll('.fpill').forEach(function(b){b.classList.remove('active');});
-      btn.classList.add('active');renderHistorial(btn.dataset.filtro);
-    });
-    var _origRC=renderCatalog;
-    renderCatalog=function(){
-      _origRC();
-      document.querySelectorAll('#catalog-grid .btn-dcat,#catalog-grid .btn-ecat').forEach(function(btn){
-        btn.addEventListener('click',function(){setTimeout(saveData,200);});
-      });
-    };
-    var _origRI=renderInstructors;
-    renderInstructors=function(){
-      _origRI();
-      document.querySelectorAll('#inst-grid .btn-dinst,#inst-grid .btn-einst').forEach(function(btn){
-        btn.addEventListener('click',function(){setTimeout(saveData,200);});
-      });
-    };
-    document.getElementById('overlay').addEventListener('click',function(){setTimeout(saveData,300);});
-  }
-
-  initUI();
-  loadData(function(){
-    renderCourseList(sortS());
+  document.querySelectorAll('.nav-item').forEach(function(el){
+    el.addEventListener('click',function(){showView(el.dataset.view);});
   });
-});
+  document.getElementById('btn-nuevo').addEventListener('click',openNewCourse);
+  document.getElementById('btn-back').addEventListener('click',function(){showView('cursos');});
+  document.getElementById('btn-addcat').addEventListener('click',openAddCatalog);
+  document.getElementById('btn-addinst').addEventListener('click',openAddInstructor);
+  document.getElementById('overlay').addEventListener('click',function(e){if(e.target===this)closeModal();});
+  document.getElementById('search-input').addEventListener('input',function(){
+    var q=this.value.toLowerCase();
+    var f=SESSIONS.filter(function(s){var c=getCat(s.catId);return (c.name||'').toLowerCase().includes(q)||s.sid.toLowerCase().includes(q);});
+    renderCourseList(sortS(f));
+  });
+  document.getElementById('hist-pills').addEventListener('click',function(e){
+    var btn=e.target.closest('.fpill');if(!btn)return;
+    document.querySelectorAll('.fpill').forEach(function(b){b.classList.remove('active');});
+    btn.classList.add('active');renderHistorial(btn.dataset.filtro);
+  });
 
+  // Save after catalog and instructor edits/deletes (patched at render time)
+  var _origRC=renderCatalog;
+  renderCatalog=function(){
+    _origRC();
+    document.querySelectorAll('#catalog-grid .btn-dcat, #catalog-grid .btn-ecat').forEach(function(btn){
+      btn.addEventListener('click',function(){setTimeout(saveData,100);});
+    });
+  };
+  var _origRI=renderInstructors;
+  renderInstructors=function(){
+    _origRI();
+    document.querySelectorAll('#inst-grid .btn-dinst, #inst-grid .btn-einst').forEach(function(btn){
+      btn.addEventListener('click',function(){setTimeout(saveData,100);});
+    });
+  };
+
+  // Save after modal confirm buttons for catalog and instructor edits
+  document.getElementById('overlay').addEventListener('click',function(){
+    setTimeout(saveData,200);
+  });
+
+  renderCourseList(sortS());
+
+  // Show a subtle indicator if data was loaded from storage
+  if(loaded){
+    var ind=document.createElement('div');
+    ind.style.cssText='position:fixed;bottom:16px;right:16px;background:#1B5CA8;color:#fff;padding:8px 14px;border-radius:8px;font-size:12px;z-index:9999;opacity:1;transition:opacity 1s';
+    ind.textContent='Datos restaurados correctamente';
+    document.body.appendChild(ind);
+    setTimeout(function(){ind.style.opacity='0';setTimeout(function(){ind.remove();},1000);},2500);
+  }
+});
 </script>
 </body>
 </html>
