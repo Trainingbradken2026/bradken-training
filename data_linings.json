@@ -1,1 +1,1 @@
-{"sessions":[],"participants":{},"salas":[{"id":"SALA-001","name":"Sala - Prueba","aforo":10,"ubicacion":"Linings"}],"areas":["Soldadura"],"supervisores":[]}
+{"sessions":[],"participants":{},"salas":[{"id":"SALA-001","name":"Sala - Prueba","aforo":10,"ubicacion":"Linings"}],"areas":["Soldadura"],"supervisores":[],"instructors":[{"name":"Antonio Vera","role":"Training Coordinator","pilar":"Desarrollo de personas y liderazgo","bg":"#E0E7FF","fc":"#4338CA"}]}
