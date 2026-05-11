@@ -1,0 +1,1130 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bradken — Autorizaciones de Personal</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+<style>
+:root{
+  --bg:#eef1f6;--sf:#ffffff;--sf2:#f5f7fa;--sf3:#e4e8f0;
+  --bd:rgba(0,0,0,0.1);--bd2:rgba(0,0,0,0.18);
+  --tx:#0f1923;--tx2:#374558;--tx3:#6b7a8d;
+  --ac:#1a52a0;--ac-bg:rgba(26,82,160,0.08);--ac-bd:rgba(26,82,160,0.3);
+  --gn:#15803d;--gn-bg:rgba(21,128,61,0.09);--gn-bd:rgba(21,128,61,0.35);
+  --rd:#b91c1c;--rd-bg:rgba(185,28,28,0.08);--rd-bd:rgba(185,28,28,0.35);
+  --am:#b45309;--am-bg:rgba(180,83,9,0.08);--am-bd:rgba(180,83,9,0.35);
+  --r:8px;--rl:12px;
+  --mono:'IBM Plex Mono',monospace;--sans:'IBM Plex Sans',sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{background:var(--bg);color:var(--tx);font-family:var(--sans);font-size:14px;display:flex;flex-direction:column}
+.layout{display:flex;flex:1;overflow:hidden}
+.sidebar{width:210px;background:var(--sf);border-right:1px solid var(--bd2);display:flex;flex-direction:column;flex-shrink:0}
+
+/* Splash screen */
+.splash{position:fixed;inset:0;background:var(--bg);z-index:1000;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px}
+.splash.hidden{display:none}
+.splash-logo{width:110px;height:110px;background:var(--sf);border-radius:20px;display:flex;align-items:center;justify-content:center;margin-bottom:28px;box-shadow:0 4px 20px rgba(0,0,0,0.08);padding:12px}
+.splash-logo img{width:100%;height:auto}
+.splash-title{font-size:22px;font-weight:600;color:var(--ac);text-align:center;margin-bottom:6px}
+.splash-sub{font-size:15px;font-weight:500;color:var(--ac);text-align:center;margin-bottom:8px}
+.splash-desc{font-size:14px;color:var(--tx2);text-align:center;margin-bottom:36px}
+.splash-sites{display:flex;gap:16px;flex-wrap:wrap;justify-content:center;max-width:560px;width:100%}
+.site-card{flex:1;min-width:200px;max-width:240px;background:var(--sf);border:1.5px solid var(--bd2);border-radius:16px;padding:28px 20px;text-align:center;cursor:pointer;transition:all .2s}
+.site-card:hover{border-color:var(--ac);transform:translateY(-3px);box-shadow:0 8px 24px rgba(26,82,160,0.12)}
+.site-icon{font-size:36px;margin-bottom:14px;display:block}
+.site-name{font-size:17px;font-weight:600;color:var(--tx);margin-bottom:6px}
+.site-desc{font-size:13px;color:var(--tx2)}
+.main{flex:1;overflow-y:auto;display:flex;flex-direction:column}
+.brand{padding:18px 16px 14px;border-bottom:1px solid var(--bd)}
+.brand-name{font-family:var(--mono);font-size:11px;font-weight:500;color:var(--ac);letter-spacing:.06em;text-transform:uppercase}
+.brand-sub{font-size:10px;color:var(--tx3);margin-top:3px}
+nav{padding:10px 8px;flex:1}
+.ni{display:flex;align-items:center;gap:10px;padding:8px 12px;border-radius:var(--r);cursor:pointer;font-size:13px;color:var(--tx2);border:1px solid transparent;margin-bottom:2px;background:none;width:100%;font-family:var(--sans);text-align:left;transition:all .15s;font-weight:400}
+.ni:hover{color:var(--ac);background:var(--ac-bg)}
+.ni.active{color:var(--ac);background:#dbeafe;border-color:transparent;font-weight:500}
+.ni-ico{width:18px;height:18px;flex-shrink:0;opacity:.6}
+.ni.active .ni-ico{opacity:1}
+.ni:hover .ni-ico{opacity:1}
+.sep{height:1px;background:var(--bd);margin:6px 4px}
+.sfooter{padding:10px 14px;border-top:1px solid var(--bd);font-size:10px;color:var(--tx3);line-height:1.5}
+.topbar{padding:12px 22px;border-bottom:1px solid var(--bd2);display:flex;align-items:center;justify-content:space-between;background:var(--sf);flex-shrink:0;gap:12px}
+.page-title{font-size:14px;font-weight:500;flex-shrink:0}
+.topbar-r{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.content{padding:22px;flex:1}
+.panel{display:none}.panel.active{display:block}
+.card{background:var(--sf);border:1px solid var(--bd);border-radius:var(--rl);padding:16px 20px;margin-bottom:12px}
+.ctitle{font-size:10px;color:var(--tx2);font-family:var(--mono);letter-spacing:.07em;text-transform:uppercase;margin-bottom:12px;font-weight:500}
+.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-bottom:18px}
+.stat{background:var(--sf);border:1px solid var(--bd2);border-radius:var(--rl);padding:16px 20px}
+.stat-n{font-size:28px;font-weight:400;font-family:var(--mono)}
+.stat-l{font-size:12px;color:var(--tx2);margin-top:4px;font-weight:500}
+.gn{color:var(--gn)}.rd{color:var(--rd)}.am{color:var(--am)}
+.badge{display:inline-flex;align-items:center;gap:3px;padding:2px 8px;border-radius:20px;font-size:11px;font-family:var(--mono);font-weight:500;border:1px solid}
+.b-ok{background:var(--gn-bg);color:var(--gn);border-color:var(--gn-bd)}
+.b-venc{background:var(--rd-bg);color:var(--rd);border-color:var(--rd-bd)}
+.b-coord{background:var(--am-bg);color:var(--am);border-color:var(--am-bd)}
+.b-no{background:var(--sf3);color:var(--tx3);border-color:var(--bd)}
+.pills{display:flex;flex-wrap:wrap;gap:4px;margin-top:6px}
+.pill{font-size:11px;padding:2px 8px;border-radius:8px;border:1px solid;font-family:var(--mono);font-weight:500}
+.p-ok{background:var(--gn-bg);color:var(--gn);border-color:var(--gn-bd)}
+.p-venc{background:var(--rd-bg);color:var(--rd);border-color:var(--rd-bd)}
+.p-coord{background:var(--am-bg);color:var(--am);border-color:var(--am-bd)}
+.btn{padding:6px 13px;border-radius:var(--r);border:1px solid var(--bd2);background:var(--sf);color:var(--tx);font-size:12px;cursor:pointer;font-family:var(--sans);transition:all .15s;white-space:nowrap;display:inline-flex;align-items:center;gap:5px}
+.btn:hover{border-color:var(--ac);color:var(--ac);background:var(--ac-bg)}
+.btn:disabled{opacity:.4;cursor:not-allowed}
+.btn-ac{background:var(--ac);color:#0f0f0f;border-color:var(--ac);font-weight:500}
+.btn-ac:hover{background:#d4f000;border-color:#d4f000;color:#0f0f0f}
+.btn-sm{padding:3px 9px;font-size:11px}
+.btn-gh{background:transparent;border-color:transparent;color:var(--tx2)}
+.btn-gh:hover{background:var(--sf2);color:var(--tx);border-color:var(--bd)}
+input[type=text],input[type=search],select{background:var(--sf2);border:1px solid var(--bd2);border-radius:var(--r);color:var(--tx);font-size:12px;padding:6px 11px;font-family:var(--sans);outline:none;transition:border .15s}
+input:focus,select:focus{border-color:var(--ac-bd)}
+select option{background:var(--sf)}
+.srow{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap}
+.srow input,.srow select{flex:1;min-width:140px}
+.wrow{display:flex;align-items:flex-start;gap:12px;padding:11px 0;border-bottom:1px solid var(--bd);cursor:pointer;transition:background .1s}
+.wrow:last-child{border-bottom:none}
+.wrow:hover{background:rgba(255,255,255,.015);margin:0 -20px;padding:11px 20px}
+.av{width:34px;height:34px;border-radius:50%;background:var(--ac-bg);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:500;font-family:var(--mono);color:var(--ac);border:1px solid var(--ac-bd);flex-shrink:0}
+.wname{font-size:13px;font-weight:500}
+.wmeta{font-size:10px;color:var(--tx3);font-family:var(--mono);margin-top:1px}
+.qgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px}
+.qcard{background:var(--sf);border:1px solid var(--bd);border-radius:var(--rl);padding:12px 10px;text-align:center;cursor:pointer;transition:all .15s}
+.qcard:hover{border-color:var(--bd2);transform:translateY(-1px)}
+.qcard.sel{border-color:var(--ac);background:var(--ac-bg)}
+.qimg{width:88px;height:88px;margin:0 auto 8px;background:#fff;border-radius:4px;overflow:hidden;display:flex;align-items:center;justify-content:center}
+.qname{font-size:10px;font-weight:500;line-height:1.3;color:var(--tx)}
+.qid{font-size:9px;color:var(--tx3);font-family:var(--mono);margin-top:2px}
+.prog{height:3px;background:var(--sf3);border-radius:2px;margin-top:5px;overflow:hidden}
+.pf{height:100%;border-radius:2px;transition:width .4s}
+.pg{background:var(--gn)}.pa{background:var(--am)}.pr{background:var(--rd)}
+.cgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:8px}
+.cc{background:var(--sf);border:1px solid var(--bd2);border-radius:var(--r);padding:12px 14px}
+.cc-name{font-size:12px;font-weight:500;font-family:var(--mono);color:var(--tx)}
+.cc-sub{font-size:11px;color:var(--tx2);margin-top:3px}
+.swrap{max-width:500px;margin:0 auto}
+.sinput{display:flex;gap:8px;margin-bottom:18px}
+.sinput input{flex:1;font-size:14px;padding:9px 13px}
+.sresult{border-radius:var(--rl);padding:26px;text-align:center;border:1px solid}
+.sr-ok{border-color:var(--gn-bd);background:var(--gn-bg)}
+.sr-fail{border-color:var(--rd-bd);background:var(--rd-bg)}
+.sr-icon{font-size:38px;margin-bottom:8px}
+.sr-status{font-size:17px;font-weight:500;font-family:var(--mono)}
+.sr-ok .sr-status{color:var(--gn)}.sr-fail .sr-status{color:var(--rd)}
+.sr-name{font-size:15px;font-weight:500;margin-top:6px}
+.sr-cargo{font-size:11px;color:var(--tx2);font-family:var(--mono);margin-top:2px}
+.sr-list{margin-top:14px;text-align:left;border-top:1px solid var(--bd);padding-top:12px}
+.sr-row{display:flex;justify-content:space-between;align-items:center;padding:4px 0;font-size:11px;border-bottom:1px solid var(--bd)}
+.sr-row:last-child{border-bottom:none}
+.dzone{border:1px dashed var(--bd2);border-radius:var(--rl);padding:28px;text-align:center;cursor:pointer;transition:all .2s;margin-bottom:14px}
+.dzone:hover,.dzone.over{border-color:var(--ac-bd);background:var(--ac-bg)}
+.dz-ico{font-size:26px;opacity:.35;margin-bottom:8px}
+.notice{padding:10px 14px;border-radius:var(--r);border:1px solid;font-size:12px;margin-bottom:12px;line-height:1.5}
+.n-info{border-color:var(--ac-bd);background:var(--ac-bg);color:var(--ac)}
+.n-ok{border-color:var(--gn-bd);background:var(--gn-bg);color:var(--gn)}
+.n-warn{border-color:var(--am-bd);background:var(--am-bg);color:var(--am)}
+.n-err{border-color:var(--rd-bd);background:var(--rd-bg);color:var(--rd)}
+.cfg-row{padding:12px 0;border-bottom:1px solid var(--bd)}
+.cfg-row:last-child{border-bottom:none}
+.cfg-label{font-size:13px;font-weight:500}
+.cfg-sub{font-size:11px;color:var(--tx3);margin-top:2px;line-height:1.5}
+.mbg{position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:500;display:none;align-items:flex-start;justify-content:center;padding:16px;overflow-y:auto}
+.mbg.open{display:flex}
+.modal{background:var(--sf);border:1px solid var(--bd2);border-radius:var(--rl);padding:22px;width:100%;max-width:520px;margin:auto}
+.mhead{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px}
+.modal-lg{max-width:760px}
+.dt{width:100%;border-collapse:collapse;font-size:13px}
+.dt th{text-align:left;padding:8px 12px;font-size:10px;color:var(--tx2);font-family:var(--mono);text-transform:uppercase;letter-spacing:.06em;border-bottom:2px solid var(--bd2);font-weight:600;background:var(--sf2)}
+.dt td{padding:9px 12px;border-bottom:1px solid var(--bd);color:var(--tx);vertical-align:middle}
+.dt tr:hover td{background:var(--ac-bg)}
+.dt tr:last-child td{border-bottom:none}
+.course-stats{display:flex;gap:12px;margin-bottom:16px;flex-wrap:wrap}
+.course-stat{background:var(--sf2);border:1px solid var(--bd2);border-radius:var(--r);padding:10px 16px;text-align:center;flex:1;min-width:80px}
+.course-stat-n{font-size:22px;font-weight:500;font-family:var(--mono)}
+.course-stat-l{font-size:11px;color:var(--tx2);margin-top:2px}
+code{font-family:var(--mono);font-size:11px;background:var(--sf3);padding:1px 5px;border-radius:4px;color:var(--ac)}
+pre{font-family:var(--mono);font-size:11px;background:var(--sf2);padding:12px;border-radius:var(--r);overflow-x:auto;color:var(--tx2);border:1px solid var(--bd);line-height:1.7}
+.empty{text-align:center;padding:36px;color:var(--tx3);font-size:13px}
+.toast{position:fixed;bottom:20px;right:20px;z-index:9999;padding:10px 16px;border-radius:var(--r);font-size:12px;max-width:340px;border:1px solid;animation:fi .2s ease}
+@keyframes fi{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.steps .step{display:flex;gap:12px;padding:9px 0;border-bottom:1px solid var(--bd)}
+.steps .step:last-child{border-bottom:none}
+.step-n{font-family:var(--mono);font-size:11px;color:var(--ac);flex-shrink:0;width:24px}
+.step-t{font-size:12px;color:var(--tx2);line-height:1.6}
+.uchip{display:flex;align-items:center;gap:7px;padding:4px 10px;border-radius:20px;background:var(--sf3);border:1px solid var(--bd2);font-size:11px;color:var(--tx2)}
+.uav{width:22px;height:22px;border-radius:50%;object-fit:cover}
+@media(max-width:700px){.sidebar{display:none}.stats{grid-template-columns:repeat(2,1fr)}.content{padding:14px}}
+::-webkit-scrollbar{width:4px;height:4px}
+::-webkit-scrollbar-thumb{background:var(--bd2);border-radius:2px}
+</style>
+</head>
+<body>
+<!-- SPLASH SCREEN -->
+<div class="splash" id="splash">
+  <div class="splash-logo">
+    <img src="logo.png" alt="Bradken">
+  </div>
+  <div class="splash-title">Autorizaciones de Actividades Críticas</div>
+  <div class="splash-sub">Bradken Training SAM</div>
+  <div class="splash-desc">Selecciona tu sede para continuar</div>
+  <div class="splash-sites">
+    <div class="site-card" onclick="selectSede('linings')">
+      <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" style="margin-bottom:14px">
+        <rect x="4" y="14" width="40" height="6" rx="2" fill="#1a52a0"/>
+        <rect x="4" y="23" width="40" height="6" rx="2" fill="#1a52a0" opacity=".75"/>
+        <rect x="4" y="32" width="40" height="6" rx="2" fill="#1a52a0" opacity=".5"/>
+        <rect x="8" y="8" width="32" height="4" rx="2" fill="#1a52a0" opacity=".4"/>
+      </svg>
+      <div class="site-name">Lima Linings</div>
+      <div class="site-desc">Revestimientos</div>
+    </div>
+    <div class="site-card" onclick="selectSede('chilca')">
+      <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" style="margin-bottom:14px">
+        <path d="M24 6L6 20v22h12V30h12v12h12V20L24 6z" fill="#15803d" opacity=".15"/>
+        <path d="M24 6L6 20v22h12V30h12v12h12V20L24 6z" stroke="#15803d" stroke-width="2.5" stroke-linejoin="round" fill="none"/>
+        <rect x="19" y="30" width="10" height="12" rx="1" fill="#15803d" opacity=".3"/>
+        <path d="M6 20L24 6l18 14" stroke="#15803d" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+      </svg>
+      <div class="site-name">Chilca</div>
+      <div class="site-desc">Fundición</div>
+    </div>
+  </div>
+</div>
+
+<div class="layout" id="main-layout" style="display:none">
+<aside class="sidebar">
+  <div class="brand">
+    <img src="logo.png" alt="Bradken" style="height:32px;width:auto;margin-bottom:4px;display:block">
+    <div class="brand-sub">Sistema de autorizaciones</div>
+  </div>
+  <nav>
+    <div style="padding:4px 8px 10px">
+      <div style="font-size:10px;color:var(--tx3);font-family:var(--mono);text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px">Sede activa</div>
+      <div id="sede-badge" style="font-size:13px;font-weight:600;color:var(--ac)">—</div>
+    </div>
+    <button class="ni active" data-page="panel" onclick="goTo('panel')">
+      <svg class="ni-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+      Panel
+    </button>
+    <button class="ni" data-page="personal" onclick="goTo('personal')">
+      <svg class="ni-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="7" r="4"/><path d="M3 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/><path d="M21 21v-2a4 4 0 0 0-3-3.87"/></svg>
+      Personal
+    </button>
+    <button class="ni" data-page="scanner" onclick="goTo('scanner')">
+      <svg class="ni-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+      Verificar
+    </button>
+    <button class="ni admin-only" data-page="qr" onclick="goTo('qr')">
+      <svg class="ni-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="5" height="5"/><rect x="16" y="3" width="5" height="5"/><rect x="3" y="16" width="5" height="5"/><path d="M21 16h-3a2 2 0 0 0-2 2v3"/><path d="M21 21v.01"/><path d="M12 7v3a2 2 0 0 1-2 2H7"/><path d="M3 12h.01"/><path d="M12 3h.01"/><path d="M12 16v.01"/><path d="M16 12h1"/><path d="M21 12v.01"/><path d="M12 21v-1"/></svg>
+      Códigos QR
+    </button>
+    <div class="sep admin-only"></div>
+    <button class="ni admin-only" data-page="carga" onclick="goTo('carga')">
+      <svg class="ni-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+      Subir CSV
+    </button>
+    <button class="ni admin-only" data-page="config" onclick="goTo('config')">
+      <svg class="ni-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M4.93 4.93a10 10 0 0 0 0 14.14"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07M8.46 8.46a5 5 0 0 0 0 7.07"/></svg>
+      Configuración
+    </button>
+  </nav>
+  <div class="sfooter" id="sfooter">Sin datos cargados</div>
+  <div style="padding:8px 14px;border-top:1px solid var(--bd);display:flex;flex-direction:column;gap:6px">
+    <button class="btn btn-sm" style="width:100%;justify-content:center;font-size:11px" onclick="showSplash()">⇄ Cambiar sede</button>
+    <button class="btn btn-sm admin-only" style="width:100%;justify-content:center;font-size:11px;color:var(--rd);border-color:var(--rd-bd)" onclick="exitAdmin()">Salir modo admin</button>
+  </div>
+</aside>
+
+<div class="main">
+  <div class="topbar">
+    <span class="page-title" id="ptitle">Panel</span>
+    <div class="topbar-r">
+      <div id="auth-chip" style="display:none"></div>
+      <button class="btn btn-sm" onclick="syncSheet()" id="sync-btn" style="display:none">↻ Sincronizar</button>
+      <button class="btn btn-sm btn-ac" onclick="goTo('qr')" id="btn-qr-masivo" style="display:none">QR masivo</button>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <div class="panel active" id="p-panel">
+      <div class="stats" id="stats-row"></div>
+      <div class="card"><div class="ctitle">Habilitaciones registradas</div><div class="cgrid" id="cgrid"></div></div>
+    </div>
+
+    <div class="panel" id="p-personal">
+      <div class="srow">
+        <input type="search" id="sq" placeholder="Nombre o ID..." oninput="renderPersonal()">
+        <select id="scurso" onchange="renderPersonal()"><option value="">Todas las habilitaciones</option></select>
+        <select id="sestado" onchange="renderPersonal()">
+          <option value="">Todos los estados</option>
+        </select>
+      </div>
+      <div class="card"><div id="plist"></div></div>
+    </div>
+
+    <div class="panel" id="p-qr">
+      <div class="srow">
+        <input type="search" id="qsearch" placeholder="Buscar..." oninput="renderQR()" style="flex:2">
+        <span id="qsel-info" style="font-size:11px;color:var(--tx3);align-self:center"></span>
+        <button class="btn btn-sm" id="btn-selprint" style="display:none" onclick="printSelected()">Imprimir seleccionados</button>
+        <button class="btn btn-sm btn-ac" onclick="printAll()">Imprimir todos (PDF)</button>
+      </div>
+      <p style="font-size:11px;color:var(--tx3);margin-bottom:12px">Clic = ver perfil &nbsp;·&nbsp; Ctrl+clic = seleccionar para imprimir</p>
+      <div class="qgrid" id="qgrid"></div>
+    </div>
+
+    <div class="panel" id="p-scanner">
+      <div class="swrap">
+        <div class="card" style="margin-bottom:14px">
+          <div class="ctitle">Verificar autorización</div>
+          <p style="font-size:12px;color:var(--tx2);margin-bottom:12px">El QR del carnet envía el ID automáticamente. También puedes escribirlo aquí.</p>
+          <div class="sinput">
+            <input type="text" id="scan-id" placeholder="Ej: 10011161" onkeydown="if(event.key==='Enter')verificar()">
+            <button class="btn btn-ac" onclick="verificar()">Verificar</button>
+          </div>
+        </div>
+        <div id="scan-result"></div>
+      </div>
+    </div>
+
+    <div class="panel" id="p-carga">
+      <div id="carga-sede-info" class="notice n-info" style="margin-bottom:12px">Sede activa: <strong id="carga-sede-label">—</strong>. Para cambiar de sede usa el botón "Cambiar sede" en el menú lateral.</div>
+      <div class="card">
+        <div class="ctitle">Actualizar datos</div>
+        <p style="font-size:13px;color:var(--tx2);margin-bottom:16px;line-height:1.7">Los datos se gestionan directamente en <strong>Google Sheets</strong>. Para actualizar, edita el Sheet de la sede correspondiente y luego haz clic en <strong>Sincronizar</strong> en la barra superior.</p>
+        <div style="background:var(--sf2);border:1px solid var(--bd2);border-radius:var(--rl);padding:14px 18px;margin-bottom:16px">
+          <div style="font-size:12px;font-weight:500;color:var(--tx);margin-bottom:8px">Flujo de actualización</div>
+          <div style="display:flex;flex-direction:column;gap:8px">
+            <div style="display:flex;align-items:center;gap:10px;font-size:13px;color:var(--tx2)"><span style="width:22px;height:22px;border-radius:50%;background:var(--ac-bg);color:var(--ac);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:500;flex-shrink:0">1</span>Descarga el reporte del LMS en formato CSV</div>
+            <div style="display:flex;align-items:center;gap:10px;font-size:13px;color:var(--tx2)"><span style="width:22px;height:22px;border-radius:50%;background:var(--ac-bg);color:var(--ac);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:500;flex-shrink:0">2</span>Abre el Google Sheet y reemplaza los datos en la hoja correspondiente</div>
+            <div style="display:flex;align-items:center;gap:10px;font-size:13px;color:var(--tx2)"><span style="width:22px;height:22px;border-radius:50%;background:var(--ac-bg);color:var(--ac);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:500;flex-shrink:0">3</span>Regresa aquí y haz clic en <strong style="color:var(--tx)">Sincronizar</strong> — todos los dispositivos se actualizan</div>
+          </div>
+        </div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <button class="btn btn-gh" onclick="exportTemplate()">Descargar plantilla CSV</button>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="panel" id="p-config">
+      <div class="card">
+        <div class="ctitle">Credenciales Google</div>
+        <div class="cfg-row">
+          <div class="cfg-label">Google Client ID</div>
+          <div class="cfg-sub">Google Cloud Console → Credenciales → OAuth 2.0 Client ID → Aplicación web</div>
+          <input type="text" id="cfg-cid" placeholder="1234567890-abc.apps.googleusercontent.com" style="width:100%;margin-top:8px">
+        </div>
+        <div class="cfg-row">
+          <div class="cfg-label">Google Sheet ID</div>
+          <div class="cfg-sub">El ID en la URL del Sheet: <code>docs.google.com/spreadsheets/d/<strong>ESTE-ID</strong>/edit</code></div>
+          <input type="text" id="cfg-sid" placeholder="1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgVE2upms" style="width:100%;margin-top:8px">
+        </div>
+        <div class="cfg-row">
+          <div class="cfg-label">Nombre de la hoja</div>
+          <div class="cfg-sub">La pestaña del Sheet con los datos (por defecto: <code>Hoja1</code>)</div>
+          <input type="text" id="cfg-sname" placeholder="Chilca" style="width:200px;margin-top:8px">
+        </div>
+        <div class="cfg-row">
+          <div class="cfg-label">Nombre hoja — Lima Linings</div>
+          <div class="cfg-sub">La pestaña del Sheet con los datos de Lima Linings</div>
+          <input type="text" id="cfg-sname-linings" placeholder="Linings" style="width:200px;margin-top:8px">
+        </div>
+        <div style="margin-top:14px"><button class="btn btn-ac" onclick="saveConfig()">Guardar configuración</button></div>
+      </div>
+      <div class="card">
+        <div class="ctitle">Pasos en Google Cloud Console</div>
+        <div class="steps">
+          <div class="step"><span class="step-n">01</span><span class="step-t"><a href="https://console.cloud.google.com" target="_blank" style="color:var(--ac)">console.cloud.google.com</a> → Nuevo proyecto → nombre: <code>bradken-auth</code></span></div>
+          <div class="step"><span class="step-n">02</span><span class="step-t">APIs y servicios → Biblioteca → habilitar <code>Google Sheets API</code> y <code>Google Drive API</code></span></div>
+          <div class="step"><span class="step-n">03</span><span class="step-t">APIs y servicios → Pantalla de consentimiento OAuth → Externo → completar nombre y correo</span></div>
+          <div class="step"><span class="step-n">04</span><span class="step-t">Credenciales → + Crear credencial → ID de cliente OAuth 2.0 → Aplicación web</span></div>
+          <div class="step"><span class="step-n">05</span><span class="step-t">Orígenes JS autorizados: <code>https://TU-USUARIO.github.io</code> y <code>http://localhost</code></span></div>
+          <div class="step"><span class="step-n">06</span><span class="step-t">Copiar Client ID → pegarlo en "Google Client ID" arriba → Guardar</span></div>
+          <div class="step"><span class="step-n">07</span><span class="step-t">Crear Google Sheet con columnas: <code>id nombre cargo curso estado valido_hasta</code> → copiar ID de la URL</span></div>
+          <div class="step"><span class="step-n">08</span><span class="step-t">Compartir el Sheet: "Cualquiera con el enlace puede ver" (para que la sincronización pública funcione)</span></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+</div>
+
+<div class="mbg" id="mbg" onclick="if(event.target===this)closeModal()">
+  <div class="modal">
+    <div class="mhead">
+      <span style="font-size:14px;font-weight:500">Perfil de autorización</span>
+      <button class="btn btn-gh btn-sm" onclick="closeModal()">Cerrar</button>
+    </div>
+    <div id="mbody"></div>
+  </div>
+</div>
+
+<!-- MODAL CURSO DETALLE -->
+<div class="mbg" id="mbg-curso" onclick="if(event.target===this)closeCursoModal()">
+  <div class="modal modal-lg">
+    <div class="mhead">
+      <div>
+        <span id="curso-modal-title" style="font-size:15px;font-weight:600;color:var(--tx)"></span>
+        <div id="curso-modal-sede" style="font-size:11px;color:var(--tx3);font-family:var(--mono);margin-top:2px"></div>
+      </div>
+      <button class="btn btn-gh btn-sm" onclick="closeCursoModal()">Cerrar</button>
+    </div>
+    <div class="course-stats" id="curso-modal-stats"></div>
+    <div style="overflow-x:auto">
+      <table class="dt" id="curso-modal-table">
+        <thead><tr>
+          <th>ID</th><th>Nombre y Apellidos</th><th>Cargo</th><th>Válido hasta</th><th>Estatus</th>
+        </tr></thead>
+        <tbody id="curso-modal-body"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<script>
+// Courses are dynamic - built from loaded data, no hardcoded list
+function getCursos(){
+  const set=new Set();
+  Object.values(workers).forEach(w=>Object.keys(w.courses).forEach(c=>set.add(c)));
+  return Array.from(set).sort((a,b)=>a.localeCompare(b,'es'));
+}
+
+let CFG=JSON.parse(localStorage.getItem('bk-cfg')||'{}');
+let SEDE='chilca';
+let IS_ADMIN=false;
+// Defaults hardcoded so QR scan works on any device without configuration
+if(!CFG.sheetId) CFG.sheetId='1_5ObDmnj6hhtOfFxI0wluQPqSCp8oicYnLP7ULgOOSQ';
+if(!CFG.sheetName) CFG.sheetName='Chilca';
+if(!CFG.sheetNameLinings) CFG.sheetNameLinings='Linings';
+const APPS_SCRIPT_URL='https://script.google.com/macros/s/AKfycbx49-A8LUmoEIP6g8OKsJ0Q2rJijg_kXAXpsB7yt9Qr02rZqUYAiR46--BDQoIVP9O0/exec';
+let workers={};
+let gToken=null;
+let gUser=null;
+let selQR=new Set();
+
+function applyAdminMode(){
+  const adminItems=document.querySelectorAll('.admin-only');
+  adminItems.forEach(el=>{
+    el.style.display=IS_ADMIN?'':'none';
+  });
+}
+
+function selectSede(sede){
+  SEDE=sede;
+  sessionStorage.setItem('bk-sede',sede);
+  document.getElementById('splash').classList.add('hidden');
+  document.getElementById('main-layout').style.display='flex';
+  updateSedeUI();
+  if(CFG.clientId) initGoogle();
+  if(CFG.sheetId) syncSheet(); else renderPanel();
+  renderAuthChip();
+}
+
+window.addEventListener('DOMContentLoaded',()=>{
+  if(CFG.clientId) document.getElementById('cfg-cid').value=CFG.clientId;
+  if(CFG.sheetId) document.getElementById('cfg-sid').value=CFG.sheetId;
+  if(CFG.sheetName) document.getElementById('cfg-sname').value=CFG.sheetName;
+  if(CFG.sheetNameLinings) document.getElementById('cfg-sname-linings').value=CFG.sheetNameLinings;
+
+  const p=new URLSearchParams(location.search);
+  const qid=p.get('id');
+  const qsede=p.get('sede')||'chilca';
+
+  // QR scan landing - skip splash
+  if(qid){handleQRScan(qid,qsede);return;}
+
+  // Detect admin mode
+  const urlParams=new URLSearchParams(location.search);
+  if(urlParams.get('admin')==='Superusuario'||sessionStorage.getItem('bk-admin')==='1'){
+    IS_ADMIN=true;
+    sessionStorage.setItem('bk-admin','1');
+    // Clean URL immediately so it doesn't show ?admin=Superusuario
+    if(urlParams.get('admin')==='Superusuario'){
+      const cleanUrl=location.pathname+(location.hash||'');
+      history.replaceState(null,'',cleanUrl);
+    }
+  }
+  applyAdminMode();
+
+  // Check if sede already chosen this session
+  const savedSede=sessionStorage.getItem('bk-sede');
+  if(savedSede){
+    // Go directly without splash
+    SEDE=savedSede;
+    document.getElementById('splash').classList.add('hidden');
+    document.getElementById('main-layout').style.display='flex';
+    updateSedeUI();
+    if(CFG.clientId) setTimeout(initGoogle,1000);
+    if(CFG.sheetId) syncSheet(); else renderPanel();
+    renderAuthChip();
+  } else {
+    // Show splash
+    document.getElementById('splash').classList.remove('hidden');
+    document.getElementById('main-layout').style.display='none';
+  }
+});
+
+function initGoogle(){
+  if(!CFG.clientId||!window.google) return;
+  window._tc=google.accounts.oauth2.initTokenClient({
+    client_id:CFG.clientId,
+    scope:'https://www.googleapis.com/auth/spreadsheets',
+    callback:(r)=>{
+      if(r.error){toast('Auth error: '+r.error,'err');return;}
+      gToken=r.access_token;
+      renderAuthChip();
+      toast('Sesión iniciada. Listo para subir datos.','ok');
+    }
+  });
+  google.accounts.id.initialize({
+    client_id:CFG.clientId,
+    callback:(r)=>{
+      const pl=JSON.parse(atob(r.credential.split('.')[1]));
+      gUser={name:pl.name,picture:pl.picture,email:pl.email};
+      renderAuthChip();
+      if(window._tc) window._tc.requestAccessToken({prompt:'none'});
+    }
+  });
+}
+
+function signIn(){
+  if(!CFG.clientId){toast('Configura el Client ID primero.','warn');goTo('config');return;}
+  if(!window.google){toast('Google Identity no cargó. Revisa tu conexión.','err');return;}
+  google.accounts.id.prompt();
+  if(window._tc) window._tc.requestAccessToken({prompt:''});
+}
+
+function signOut(){
+  gToken=null;gUser=null;
+  if(window.google&&CFG.clientId) google.accounts.id.revoke(CFG.clientId,()=>{});
+  renderAuthChip();toast('Sesión cerrada','ok');
+}
+
+function renderAuthChip(){
+  const el=document.getElementById('auth-chip');
+  if(gUser){
+    el.innerHTML=`<div class="uchip"><img class="uav" src="${gUser.picture}" alt=""><span style="max-width:110px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${gUser.name}</span><button class="btn btn-sm btn-gh" style="padding:1px 6px;font-size:10px" onclick="signOut()">Salir</button></div>`;
+  } else {
+    el.innerHTML=`<button class="btn btn-sm" onclick="signIn()">Iniciar sesión Google</button>`;
+  }
+}
+
+function setSede(sede){
+  SEDE=sede;
+  sessionStorage.setItem('bk-sede',sede);
+  updateSedeUI();
+  workers={};
+  syncSheet();
+}
+
+function showSplash(){
+  sessionStorage.removeItem('bk-sede');
+  document.getElementById('splash').classList.remove('hidden');
+  document.getElementById('main-layout').style.display='none';
+}
+
+function exitAdmin(){
+  IS_ADMIN=false;
+  sessionStorage.removeItem('bk-admin');
+  applyAdminMode();
+  goTo('panel');
+  toast('Modo administrador desactivado','ok');
+}
+
+function updateSedeUI(){
+  const isChilca=SEDE==='chilca';
+  const sedeLabel=isChilca?'Chilca':'Lima Linings';
+  const badge=document.getElementById('sede-badge');
+  if(badge) badge.textContent=sedeLabel;
+  const ptitle=document.getElementById('ptitle');
+  if(ptitle) ptitle.textContent=(TITLES[currentPage]||currentPage)+' — '+sedeLabel;
+}
+
+let currentPage='panel';
+
+async function syncSheet(){
+  if(!CFG.sheetId){renderPanel();return;}
+  document.getElementById('sync-btn').textContent='↻ Cargando...';
+  document.getElementById('sfooter').textContent='Sincronizando...';
+  try{
+    const sheetParam=SEDE==='linings'?(CFG.sheetNameLinings||'Linings'):(CFG.sheetName||'Chilca');
+    const resp=await fetch(APPS_SCRIPT_URL+'?sheet='+encodeURIComponent(sheetParam));
+    if(!resp.ok) throw new Error('Apps Script error');
+    const rows=await resp.json();
+    if(!Array.isArray(rows)) throw new Error('Invalid response');
+    workers={};
+    rows.forEach(r=>{
+      const id=String(r.id||'').trim();
+      const nombre=String(r.nombre||'').trim();
+      if(!id||!nombre) return;
+      if(!workers[id]) workers[id]={id,name:nombre,cargo:r.cargo||'',courses:{}};
+      const curso=String(r.curso||'').trim();
+      const estado=String(r.estado||'').trim();
+      if(curso&&estado) workers[id].courses[curso]={status:estado,valido_hasta:String(r.valido_hasta||'').trim()};
+    });
+    populateSel();
+    const t=new Date().toLocaleTimeString('es-PE',{hour:'2-digit',minute:'2-digit'});
+    const sedeLabel=SEDE==='chilca'?'Chilca':'Linings';
+    document.getElementById('sfooter').textContent=`${sedeLabel} · Actualizado ${t} · ${Object.keys(workers).length} personas`;
+    renderPanel();
+  }catch(e){
+    document.getElementById('sfooter').textContent='Error al sincronizar';
+    toast('No se pudo leer el Sheet. Verifica el Sheet ID y que esté compartido como "Cualquiera con el enlace puede ver".','err');
+  }
+  document.getElementById('sync-btn').textContent='↻ Sincronizar';
+}
+
+async function writeToSheet(rows){
+  if(!gToken){toast('Inicia sesión con Google primero.','warn');return false;}
+  if(!CFG.sheetId){toast('Configura el Sheet ID.','warn');return false;}
+  const sn=CFG.sheetName||'Hoja1';
+  try{
+    await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${CFG.sheetId}/values/${encodeURIComponent(sn+'!A2:Z10000')}:clear`,
+      {method:'POST',headers:{Authorization:'Bearer '+gToken}});
+    const values=[['id','nombre','cargo','curso','estado','valido_hasta'],...rows];
+    const wr=await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${CFG.sheetId}/values/${encodeURIComponent(sn+'!A1')}?valueInputOption=RAW`,
+      {method:'PUT',headers:{Authorization:'Bearer '+gToken,'Content-Type':'application/json'},
+       body:JSON.stringify({range:sn+'!A1',majorDimension:'ROWS',values})});
+    if(!wr.ok) throw new Error(await wr.text());
+    return true;
+  }catch(e){
+    toast('Error al escribir en Sheet: '+e.message,'err');
+    return false;
+  }
+}
+
+async function handleQRScan(id,sede){
+  sede=sede||'chilca';
+  document.body.innerHTML=`<div style="min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;background:#f4f6f9;font-family:'IBM Plex Sans',sans-serif">
+    <div style="text-align:center;margin-bottom:28px">
+      <img src="logo.png" alt="Bradken" style="display:block;margin:0 auto 10px;height:70px;width:auto">
+      <div style="font-size:12px;color:#9aaabb;letter-spacing:.04em;margin-bottom:6px">Training SAM</div>
+      <div style="font-size:16px;font-weight:600;color:#1e5fa8;letter-spacing:.04em">Bradken ${sede==='linings'?'Lima Linings':'Chilca'}</div>
+      <div style="font-size:16px;font-weight:600;color:#1e5fa8;letter-spacing:.04em;margin-top:4px">Autorizaciones de Actividades Críticas</div>
+    </div>
+    <div id="scan-live" style="max-width:420px;width:100%;text-align:center"><div style="color:#9aaabb;font-size:13px">Cargando datos...</div></div>
+  </div>`;
+  if(CFG.sheetId){
+    try{
+      const sheetParam2=sede==='linings'?(CFG.sheetNameLinings||'Linings'):(CFG.sheetName||'Chilca');
+      const resp2=await fetch(APPS_SCRIPT_URL+'?sheet='+encodeURIComponent(sheetParam2));
+      if(resp2.ok){
+        const rows2=await resp2.json();
+        if(Array.isArray(rows2)){
+          workers={};
+          rows2.forEach(r=>{
+            const id=String(r.id||'').trim();
+            const nombre=String(r.nombre||'').trim();
+            if(!id||!nombre) return;
+            if(!workers[id]) workers[id]={id,name:nombre,cargo:r.cargo||'',courses:{}};
+            const curso=String(r.curso||'').trim();
+            const estado=String(r.estado||'').trim();
+            if(curso&&estado) workers[id].courses[curso]={status:estado,valido_hasta:String(r.valido_hasta||'').trim()};
+          });
+        }
+      }
+    }catch(e){}
+  }
+  const el=document.getElementById('scan-live');
+  const w=workers[id];
+  const gn='#16a34a',rd='#dc2626',tx3='#9aaabb',bd='rgba(0,0,0,.08)';
+  if(!w){
+    el.innerHTML=`<div style="border-radius:12px;padding:26px;text-align:center;border:1px solid rgba(220,38,38,.2);background:#ffffff;box-shadow:0 2px 12px rgba(0,0,0,0.06)"><div style="font-size:15px;font-weight:600;color:#dc2626;margin-bottom:8px">ID no registrado en el sistema</div><p style="font-size:13px;color:#5a6a7a;margin-top:6px">El trabajador con ID <strong style='color:#1a2332'>${id}</strong> no está autorizado para realizar actividades de alto riesgo.</p></div>`;
+    return;
+  }
+  const ok=Object.entries(w.courses).filter(([,d])=>d.status==='Autorizado');
+  const venc=Object.entries(w.courses).filter(([,d])=>d.status==='Vencido');
+  const has=ok.length>0;
+  const color=has?gn:rd;
+  const border=has?'rgba(22,163,74,.3)':'rgba(220,38,38,.3)';
+  const bg=has?'rgba(22,163,74,.08)':'rgba(220,38,38,.08)';
+  const allCourses=Object.entries(w.courses);
+  el.innerHTML=`<div style="border-radius:12px;padding:26px;text-align:center;border:1px solid rgba(30,95,168,0.15);background:#ffffff;box-shadow:0 2px 12px rgba(0,0,0,0.06)">
+    <div style="font-size:22px;font-weight:600;margin-top:4px;color:#1a2332">${w.name}</div>
+    <div style="font-size:13px;color:#5a6a7a;margin-top:4px">${w.cargo||''} · ${w.id}</div>
+    ${allCourses.length?`<div style="margin-top:16px;text-align:left;border-top:1px solid rgba(0,0,0,.08);padding-top:14px">
+      <table style="width:100%;border-collapse:collapse;font-size:12px">
+        <thead><tr>
+          <th style="text-align:left;padding:5px 8px;font-size:10px;color:#9aaabb;font-family:'IBM Plex Mono',monospace;text-transform:uppercase;border-bottom:1px solid rgba(0,0,0,.08)">Habilitación</th>
+          <th style="text-align:left;padding:5px 8px;font-size:10px;color:#9aaabb;font-family:'IBM Plex Mono',monospace;text-transform:uppercase;border-bottom:1px solid rgba(0,0,0,.08)">Válido hasta</th>
+          <th style="text-align:left;padding:5px 8px;font-size:10px;color:#9aaabb;font-family:'IBM Plex Mono',monospace;text-transform:uppercase;border-bottom:1px solid rgba(0,0,0,.08)">Estatus</th>
+        </tr></thead>
+        <tbody>
+          ${allCourses.map(([c,d])=>{
+            const isOk=d.status==='Autorizado';
+            const clr=isOk?'#16a34a':'#dc2626';
+            const bg2=isOk?'rgba(22,163,74,.08)':'rgba(220,38,38,.08)';
+            const bd2=isOk?'rgba(22,163,74,.3)':'rgba(220,38,38,.3)';
+            return `<tr style="border-bottom:1px solid rgba(0,0,0,.06)">
+              <td style="padding:7px 8px;font-family:'IBM Plex Mono',monospace;font-size:11px;color:#1a2332">${c}</td>
+              <td style="padding:7px 8px;font-size:11px;color:#5a6a7a">${d.valido_hasta||'—'}</td>
+              <td style="padding:7px 8px"><span style="display:inline-block;padding:2px 8px;border-radius:20px;font-size:10px;font-weight:500;background:${bg2};color:${clr};border:1px solid ${bd2}">${d.status}</span></td>
+            </tr>`;
+          }).join('')}
+        </tbody>
+      </table>
+    </div>`:`<p style="font-size:12px;color:#5a6a7a;margin-top:12px">No tiene habilitaciones registradas. No puede realizar actividades de alto riesgo.</p>`}
+  </div>`;
+}
+
+function parseCSV(text){
+  const lines=text.split('\n').filter(l=>l.trim());
+  if(lines.length<2) return;
+  const pr=l=>{const r=[];let cur='',inQ=false;for(const ch of l){if(ch==='"'){inQ=!inQ}else if(ch===','&&!inQ){r.push(cur.trim().replace(/\r/,''));cur=''}else cur+=ch;}r.push(cur.trim().replace(/\r/,''));return r;};
+  const hdr=pr(lines[0]).map(h=>h.toLowerCase().replace(/"/g,''));
+  const ix={id:hdr.indexOf('id'),nom:hdr.indexOf('nombre'),cargo:hdr.indexOf('cargo'),curso:hdr.indexOf('curso'),estado:hdr.indexOf('estado'),valido:hdr.indexOf('valido_hasta')};
+  workers={};
+  lines.slice(1).forEach(line=>{
+    const c=pr(line);
+    const id=c[ix.id];const nom=c[ix.nom];
+    if(!id||!nom||id==='id') return;
+    if(!workers[id]) workers[id]={id,name:nom,cargo:c[ix.cargo]||'',courses:{}};
+    const curso=c[ix.curso];const estado=c[ix.estado];
+    if(curso&&estado) workers[id].courses[curso]={status:estado,valido_hasta:c[ix.valido]||''};
+  });
+  populateSel();
+}
+
+function csvToRows(text){
+  const lines=text.split('\n').filter(l=>l.trim());
+  const pr=l=>{const r=[];let cur='',inQ=false;for(const ch of l){if(ch==='"'){inQ=!inQ}else if(ch===','&&!inQ){r.push(cur.trim().replace(/\r/,''));cur=''}else cur+=ch;}r.push(cur.trim().replace(/\r/,''));return r;};
+  return lines.slice(1).map(l=>pr(l)).filter(r=>r[0]&&r[0]!=='id');
+}
+
+function populateSel(){
+  // Populate course filter
+  const sel=document.getElementById('scurso');
+  sel.innerHTML='<option value="">Todas las habilitaciones</option>';
+  getCursos().forEach(c=>{
+    const o=document.createElement('option');o.value=c;o.textContent=c;sel.appendChild(o);
+  });
+  // Populate status filter dynamically from data
+  const statusSel=document.getElementById('sestado');
+  if(statusSel){
+    const statuses=new Set();
+    Object.values(workers).forEach(w=>
+      Object.values(w.courses).forEach(d=>{if(d.status) statuses.add(d.status)})
+    );
+    statusSel.innerHTML='<option value="">Todos los estados</option>';
+    // Add "Sin habilitaciones" only if some workers have no courses
+    const hasSin=Object.values(workers).some(w=>Object.keys(w.courses).length===0);
+    Array.from(statuses).sort().forEach(s=>{
+      const o=document.createElement('option');o.value=s;o.textContent=s;statusSel.appendChild(o);
+    });
+    if(hasSin){
+      const o=document.createElement('option');o.value='ninguno';o.textContent='Sin habilitaciones';statusSel.appendChild(o);
+    }
+  }
+}
+
+async function handleFiles(files){
+  const file=files[0];if(!file)return;
+  const text=await file.text();
+  parseCSV(text);
+  const n=Object.keys(workers).length;
+  renderPanel();
+  if(gToken&&CFG.sheetId){
+    toast('Subiendo datos al Sheet...','info');
+    const rows=csvToRows(text);
+    const ok=await writeToSheet(rows);
+    if(ok){
+      toast(`${n} trabajadores guardados en Google Sheet.`,'ok');
+      document.getElementById('carga-log-text').innerHTML=`<span style="color:var(--gn)">✓</span> ${n} trabajadores sincronizados en Google Sheet. Toda la planta verá los datos al sincronizar.`;
+    }
+  } else {
+    document.getElementById('carga-log-text').innerHTML=`${n} trabajadores cargados localmente. <span style="color:var(--am)">Inicia sesión Google para guardar en el Sheet.</span>`;
+    toast('Datos cargados solo en este navegador. Inicia sesión Google para subir al Sheet.','warn');
+  }
+  document.getElementById('carga-log').style.display='block';
+  document.getElementById('csvfile').value='';
+}
+
+function exportTemplate(){
+  const csv='id,nombre,cargo,curso,estado,valido_hasta\n10011161,Percy Galvez,Electrical Maintenance Supervisor,LOTOTO,Autorizado,2027-04-30\n';
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));
+  a.download='plantilla_bradken.csv';a.click();
+}
+
+const DEMO=[
+  ['10011161','Percy Galvez','Electrical Maintenance Supervisor','LOTOTO','Autorizado','30/04/2027'],
+  ['10011162','Orlando Pachas','Mechanical Maintenance Supervisor','LOTOTO','Autorizado','30/04/2027'],
+  ['10011296','Jhon Paul Cuevas','Shift Electrical Team Leader','LOTOTO','Vencido','15/01/2026'],
+  ['10011296','Jhon Paul Cuevas','Shift Electrical Team Leader','Scissorlift-Manlift','Autorizado','30/03/2027'],
+  ['10011301','Carlos Suarez','Shift Mechanical Team Leader','LOTOTO','Vencido','15/01/2026'],
+  ['10011301','Carlos Suarez','Shift Mechanical Team Leader','Montacarga-Electrico','Autorizado','30/08/2027'],
+  ['10011301','Carlos Suarez','Shift Mechanical Team Leader','Scissorlift-Manlift','Autorizado','30/03/2027'],
+  ['10011551','Eric Sotelo','Mechanical Group Leader','PTW-Caliente','Autorizado','30/08/2026'],
+  ['10011551','Eric Sotelo','Mechanical Group Leader','Montacarga-Electrico','Autorizado','30/08/2027'],
+  ['10011551','Eric Sotelo','Mechanical Group Leader','Scissorlift-Manlift','Autorizado','30/03/2027'],
+  ['10011552','Karl Montoya','Leader Electrical Group','PTW-Caliente','Autorizado','30/08/2026'],
+  ['10011552','Karl Montoya','Leader Electrical Group','Scissorlift-Manlift','Autorizado','30/03/2027'],
+  ['10011477','Giomar Ramos','Mechanical Technician','PTW-Caliente','Autorizado','30/08/2026'],
+  ['10011477','Giomar Ramos','Mechanical Technician','Scissorlift-Manlift','Autorizado','30/03/2027'],
+  ['10011475','Gerardo Calle Rey','Electrical Technician','LOTOTO','Coordinar',''],
+  ['10011475','Gerardo Calle Rey','Electrical Technician','PTW-Caliente','Autorizado','30/08/2026'],
+  ['10011502','Piero Lavado','Electrical Technician','PTW-Caliente','Autorizado','30/08/2026'],
+  ['10011502','Piero Lavado','Electrical Technician','Montacarga-Electrico','Autorizado','30/08/2027'],
+  ['10011503','Becket Mejia','Mechanical Technician','PTW-Caliente','Autorizado','30/08/2026'],
+  ['10011559','Joel Valer Hillca','Mechanical Technician','LOTOTO','Autorizado','30/05/2026'],
+  ['10011557','Daniel Chupan','Electrical Technician','LOTOTO','Autorizado','30/05/2026'],
+  ['10011557','Daniel Chupan','Electrical Technician','Montacarga-Electrico','Autorizado','30/08/2027'],
+  ['10011558','Henri Castro','Electrical Technician','LOTOTO','Autorizado','30/05/2026'],
+  ['10011555','Jose Moreno','Crane Operator','LOTOTO','Autorizado','30/05/2026'],
+  ['10011555','Jose Moreno','Crane Operator','Grua-BC1','Autorizado','30/06/2027'],
+  ['10010964','Pascual Niño Rincon','Forklift Operator','LOTOTO','Vencido','15/07/2025'],
+  ['10010964','Pascual Niño Rincon','Forklift Operator','Montacarga-Electrico','Autorizado','30/08/2027'],
+  ['10011668','Jhon Doza Belupu','Melt Shop Supervisor','LOTOTO','Autorizado','30/05/2026'],
+  ['10011668','Jhon Doza Belupu','Melt Shop Supervisor','Grua-BC1','Autorizado','30/06/2027'],
+  ['10011662','Estefany Chavestas','Safety Technician','LOTOTO','Autorizado','30/06/2026'],
+  ['10011661','Jeampierre Huari','Safety Technician','LOTOTO','Autorizado','30/06/2026'],
+  ['10011663','Brigitte Garay','Safety Specialist','LOTOTO','Autorizado','30/07/2026'],
+  ['10011657','Janet Zehnder','Site Manager','LOTOTO','Autorizado','30/05/2026'],
+  ['10011721','Alan Huaman','Melt Shop Shift In Charge','LOTOTO','Autorizado','30/05/2026'],
+  ['10011742','Siro Pacaya','Pourer','LOTOTO','Autorizado','30/05/2026'],
+  ['10011742','Siro Pacaya','Pourer','Grua-BC1','Autorizado','30/06/2027'],
+  ['10011740','Wilter Ramos','Melting Operator','LOTOTO','Autorizado','30/05/2026'],
+  ['10011740','Wilter Ramos','Melting Operator','Grua-BC1','Autorizado','30/06/2027'],
+  ['10011741','Jonatan Peña','Pre Heater Operator','Grua-BC1','Autorizado','30/06/2027'],
+  ['10011716','Jorge Trujillo','Forklift Operator','Montacarga-Electrico','Autorizado','30/08/2027'],
+  ['10011738','Carmen Alvarez','Technical Assistant','LOTOTO','Autorizado','30/05/2026'],
+  ['10011738','Carmen Alvarez','Technical Assistant','Grua-BC1','Autorizado','30/06/2027'],
+  ['10011751','Victor Yovera','Grinding Operator','LOTOTO','Autorizado','30/05/2026'],
+  ['10011751','Victor Yovera','Grinding Operator','Grua-BC1','Autorizado','30/06/2027'],
+  ['10011753','Jorge Tuñoque','Assistant Melting Operator','Grua-BC1','Autorizado','30/06/2027'],
+  ['10011478','Boris Huaman','Mechanical Technician','LOTOTO','Coordinar',''],
+  ['10011478','Boris Huaman','Mechanical Technician','PTW-Caliente','Autorizado','30/08/2026'],
+  ['10011717','Beatriz Quevedo','Lab Operator','LOTOTO','Autorizado','30/05/2026'],
+  ['10011752','Cielo Ynga','HSE Technician','LOTOTO','Autorizado','30/05/2026'],
+  ['10006736','Arun Gandhiraman','Project Engineering Lead','LOTOTO','Autorizado','30/07/2026'],
+  ['10010941','Italo Marsano','Technical Lead','LOTOTO','Autorizado','30/05/2026'],
+];
+
+async function loadDemo(){
+  workers={};
+  DEMO.forEach(r=>{
+    const[id,nom,cargo,curso,estado,valido]=r;
+    if(!workers[id]) workers[id]={id,name:nom,cargo,courses:{}};
+    if(curso) workers[id].courses[curso]={status:estado,valido_hasta:valido};
+  });
+  populateSel();renderPanel();
+  if(gToken&&CFG.sheetId){
+    toast('Subiendo datos demo al Sheet...','info');
+    const ok=await writeToSheet(DEMO);
+    if(ok) toast('Datos demo guardados en Google Sheet.','ok');
+  } else toast('Datos demo cargados localmente.','ok');
+  document.getElementById('carga-log-text').textContent=`${Object.keys(workers).length} trabajadores demo cargados.`;
+  document.getElementById('carga-log').style.display='block';
+  goTo('panel');
+}
+
+function wStatus(w){
+  const v=Object.values(w.courses);
+  if(v.some(c=>c.status==='Autorizado')) return 'Autorizado';
+  if(v.some(c=>c.status==='Vencido')) return 'Vencido';
+  if(v.length) return 'Coordinar';
+  return 'ninguno';
+}
+function ini(n){const p=n.trim().split(' ');return((p[0]?.[0]||'')+(p[1]?.[0]||p[0]?.[1]||'')).toUpperCase();}
+function bdg(s){
+  if(s==='Autorizado') return`<span class="badge b-ok" style="font-size:12px;padding:3px 10px">Autorizado</span>`;
+  if(s==='Vencido') return`<span class="badge b-venc" style="font-size:12px;padding:3px 10px">Vencido</span>`;
+  if(s==='Coordinar') return`<span class="badge b-coord" style="font-size:12px;padding:3px 10px">Por coordinar</span>`;
+  return`<span class="badge b-no" style="font-size:12px;padding:3px 10px">Sin habilitaciones</span>`;
+}
+
+function renderPanel(){
+  const ws=Object.values(workers);
+  const tot=ws.length;
+  // Solo cuenta vigentes: todos sus cursos están en Autorizado, sin ninguno vencido o por regularizar
+  const auth=ws.filter(w=>{
+    const vals=Object.values(w.courses);
+    return vals.length>0 && vals.every(c=>c.status==='Autorizado');
+  }).length;
+  const conVenc=ws.filter(w=>Object.values(w.courses).some(c=>c.status==='Vencido')).length;
+  const conReg=ws.filter(w=>Object.values(w.courses).some(c=>c.status==='Regularizar'||c.status==='Coordinar')).length;
+  document.getElementById('stats-row').innerHTML=`
+    <div class="stat"><div class="stat-n">${tot}</div><div class="stat-l">Trabajadores</div></div>
+    <div class="stat"><div class="stat-n gn">${auth}</div><div class="stat-l">Con cursos vigentes</div></div>
+    <div class="stat"><div class="stat-n rd">${conVenc}</div><div class="stat-l">Con cursos vencidos</div></div>
+    <div class="stat"><div class="stat-n am">${conReg}</div><div class="stat-l">Por regularizar</div></div>`;
+  const cursos=getCursos();
+  let html='';
+  cursos.forEach(c=>{
+    const h=ws.filter(w=>w.courses[c]);
+    const ok=h.filter(w=>w.courses[c]?.status==='Autorizado').length;
+    const tot=h.length;
+    if(!tot) return;
+    const pct=Math.round(ok/tot*100);
+    html+=`<div class="cc" onclick="showCursoModal('${c.replace(/'/g,"\'")}')" style="cursor:pointer;transition:all .15s" onmouseover="this.style.borderColor='var(--ac)';this.style.transform='translateY(-2px)'" onmouseout="this.style.borderColor='';this.style.transform=''">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <div class="cc-name">${c}</div>
+        <span style="font-size:10px;color:var(--tx2);font-family:var(--mono);font-weight:500">${ok}/${tot}</span>
+      </div>
+      <div class="cc-sub">${pct}% vigente</div>
+      <div class="prog"><div class="pf ${pct<50?'pr':pct<80?'pa':'pg'}" style="width:${pct}%"></div></div>
+    </div>`;
+  });
+  document.getElementById('cgrid').innerHTML=html||'<div class="empty">Sin datos. Sincroniza para cargar la información.</div>';
+}
+
+function renderPersonal(){
+  const q=(document.getElementById('sq')?.value||'').toLowerCase();
+  const fc=document.getElementById('scurso')?.value||'';
+  const fs=document.getElementById('sestado')?.value||'';
+  let ws=Object.values(workers);
+  if(q) ws=ws.filter(w=>w.name.toLowerCase().includes(q)||w.id.includes(q));
+  if(fc) ws=ws.filter(w=>w.courses[fc]);
+  if(fs==='ninguno') ws=ws.filter(w=>!Object.keys(w.courses).length);
+  else if(fs) ws=ws.filter(w=>Object.values(w.courses).some(c=>c.status===fs));
+  ws.sort((a,b)=>a.name.localeCompare(b.name,'es'));
+  const el=document.getElementById('plist');
+  if(!ws.length){el.innerHTML='<div class="empty">Sin resultados</div>';return;}
+  el.innerHTML=ws.map(w=>{
+    const pills=Object.entries(w.courses).map(([c,d])=>`<span class="pill ${d.status==='Autorizado'?'p-ok':d.status==='Vencido'?'p-venc':'p-coord'}">${c}</span>`).join('');
+    return`<div class="wrow" onclick="showProfile('${w.id}')">
+      <div class="av">${ini(w.name)}</div>
+      <div style="flex:1;min-width:0">
+        <div class="wname">${w.name}</div>
+        <div class="wmeta">${w.cargo||'—'} · ${w.id}</div>
+        <div class="pills" style="margin-top:6px">${pills||'<span style="font-size:11px;color:var(--tx3)">Sin cursos registrados</span>'}</div>
+      </div>
+      ${IS_ADMIN?`<button class="btn btn-sm" style="flex-shrink:0;color:var(--ac);border-color:var(--ac-bd)" onclick="event.stopPropagation();printQR('${w.id}')">QR</button>`:''}
+    </div>`;
+  }).join('');
+}
+
+function renderQR(){
+  const q=(document.getElementById('qsearch')?.value||'').toLowerCase();
+  let ws=Object.values(workers).filter(w=>!q||w.name.toLowerCase().includes(q)||w.id.includes(q));
+  const el=document.getElementById('qgrid');
+  if(!ws.length){el.innerHTML='<div class="empty" style="grid-column:1/-1">Sin trabajadores</div>';return;}
+  el.innerHTML=ws.map(w=>`<div class="qcard ${selQR.has(w.id)?'sel':''}" id="qrc-${w.id}" onclick="qrClick(event,'${w.id}')"><div class="qimg" id="qi-${w.id}"></div><div class="qname">${w.name}</div><div class="qid">${w.id}</div></div>`).join('');
+  ws.forEach(w=>{
+    const e=document.getElementById('qi-'+w.id);
+    if(e&&!e.dataset.done){
+      e.dataset.done='1';
+      const url=location.origin+location.pathname+'?sede='+SEDE+'&id='+w.id;
+      try{new QRCode(e,{text:url,width:84,height:84,colorDark:'#000',colorLight:'#fff',correctLevel:QRCode.CorrectLevel.M});}catch(ex){}
+    }
+  });
+}
+
+function qrClick(e,id){
+  if(e.ctrlKey||e.metaKey){
+    selQR.has(id)?selQR.delete(id):selQR.add(id);
+    document.getElementById('qrc-'+id)?.classList.toggle('sel',selQR.has(id));
+    const n=selQR.size;
+    document.getElementById('qsel-info').textContent=n?`${n} seleccionado${n>1?'s':''}` :'';
+    document.getElementById('btn-selprint').style.display=n?'inline-flex':'none';
+  } else showProfile(id);
+}
+
+function showProfile(id){
+  const w=workers[id];if(!w) return;
+  const s=wStatus(w);
+  const url=location.origin+location.pathname+'?sede='+SEDE+'&id='+w.id;
+  const rows=Object.entries(w.courses).map(([c,d])=>{
+    const isOk=d.status==='Autorizado';
+    return `<tr style="border-bottom:1px solid var(--bd)">
+      <td style="font-family:var(--mono);font-size:11px;padding:6px 8px;color:var(--tx)">${c}</td>
+      <td style="padding:6px 8px;font-size:11px;color:var(--tx2)">${d.valido_hasta||'—'}</td>
+      <td style="padding:6px 8px"><span style="display:inline-block;padding:2px 8px;border-radius:20px;font-size:10px;font-weight:500;background:${isOk?'var(--gn-bg)':'var(--rd-bg)'};color:${isOk?'var(--gn)':'var(--rd)'};border:1px solid ${isOk?'var(--gn-bd)':'var(--rd-bd)'}">${d.status}</span></td>
+    </tr>`;
+  }).join('');
+  document.getElementById('mbody').innerHTML=`
+    <div style="display:flex;align-items:center;gap:13px;margin-bottom:16px">
+      <div class="av" style="width:42px;height:42px;font-size:13px">${ini(w.name)}</div>
+      <div style="flex:1"><div style="font-size:15px;font-weight:500">${w.name}</div><div style="font-size:11px;color:var(--tx3);font-family:var(--mono)">${w.cargo||'—'} · ${w.id}</div></div>
+      <div id="mqr" style="background:#fff;border-radius:5px;padding:3px;width:72px;height:72px;flex-shrink:0;overflow:hidden"></div>
+    </div>
+    ${rows?`<div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse"><thead><tr>${['Habilitación','Válido hasta','Estatus'].map(h=>`<th style="text-align:left;padding:5px 8px;font-size:10px;color:var(--tx3);font-family:var(--mono);text-transform:uppercase;border-bottom:1px solid var(--bd)">${h}</th>`).join('')}</tr></thead><tbody>${rows}</tbody></table></div>`:'<div class="empty">Sin cursos registrados</div>'}
+    <div style="margin-top:14px;display:flex;gap:8px">${IS_ADMIN?`<button class="btn btn-sm btn-ac" onclick="printQR('${w.id}')">Imprimir QR</button>`:''}<button class="btn btn-sm btn-gh" onclick="closeModal()">Cerrar</button></div>`;
+  document.getElementById('mbg').classList.add('open');
+  try{new QRCode(document.getElementById('mqr'),{text:url,width:66,height:66,colorDark:'#000',colorLight:'#fff'});}catch(e){}
+}
+function closeModal(){document.getElementById('mbg').classList.remove('open');}
+
+function showCursoModal(curso){
+  const ws=Object.values(workers);
+  const holders=ws.filter(w=>w.courses[curso]);
+  const ok=holders.filter(w=>w.courses[curso]?.status==='Autorizado').length;
+  const venc=holders.filter(w=>w.courses[curso]?.status==='Vencido').length;
+  const coord=holders.filter(w=>w.courses[curso]?.status==='Coordinar'||w.courses[curso]?.status==='Regularizar').length;
+  const pct=holders.length>0?Math.round(ok/holders.length*100):0;
+  const sedeLabel=SEDE==='chilca'?'Chilca':'Lima Linings';
+
+  document.getElementById('curso-modal-title').textContent=curso;
+  document.getElementById('curso-modal-sede').textContent=sedeLabel+' · '+holders.length+' personas registradas';
+
+  document.getElementById('curso-modal-stats').innerHTML=`
+    <div class="course-stat"><div class="course-stat-n" style="color:var(--tx)">${holders.length}</div><div class="course-stat-l">Total</div></div>
+    <div class="course-stat"><div class="course-stat-n" style="color:var(--gn)">${ok}</div><div class="course-stat-l">Autorizado</div></div>
+    <div class="course-stat"><div class="course-stat-n" style="color:var(--rd)">${venc}</div><div class="course-stat-l">Vencido</div></div>
+    <div class="course-stat"><div class="course-stat-n" style="color:var(--am)">${coord}</div><div class="course-stat-l">Por coordinar</div></div>
+    <div class="course-stat"><div class="course-stat-n" style="color:var(--tx)">${pct}%</div><div class="course-stat-l">Vigente</div></div>
+  `;
+
+  // Sort by expiry date ascending (soonest/expired first, furthest last)
+  const parseDate=str=>{
+    if(!str) return new Date('9999-12-31');
+    // Handle dd/mm/yyyy
+    const p=str.split('/');
+    if(p.length===3) return new Date(p[2],p[1]-1,p[0]);
+    // Handle yyyy-mm-dd
+    return new Date(str);
+  };
+  const sorted=[...holders].sort((a,b)=>{
+    const da=parseDate(a.courses[curso]?.valido_hasta);
+    const db=parseDate(b.courses[curso]?.valido_hasta);
+    return da-db;
+  });
+
+  document.getElementById('curso-modal-body').innerHTML=sorted.map(w=>{
+    const d=w.courses[curso];
+    const isOk=d.status==='Autorizado';
+    const isVenc=d.status==='Vencido';
+    const clr=isOk?'var(--gn)':isVenc?'var(--rd)':'var(--am)';
+    const bg=isOk?'var(--gn-bg)':isVenc?'var(--rd-bg)':'var(--am-bg)';
+    const border=isOk?'var(--gn-bd)':isVenc?'var(--rd-bd)':'var(--am-bd)';
+    return `<tr>
+      <td style="font-family:var(--mono);font-size:12px;color:var(--tx2)">${w.id}</td>
+      <td style="font-weight:500">${w.name}</td>
+      <td style="color:var(--tx2);font-size:12px">${w.cargo||'—'}</td>
+      <td style="font-family:var(--mono);font-size:12px;color:var(--tx2)">${d.valido_hasta||'—'}</td>
+      <td><span style="display:inline-block;padding:2px 10px;border-radius:20px;font-size:11px;font-weight:500;background:${bg};color:${clr};border:1px solid ${border}">${d.status}</span></td>
+    </tr>`;
+  }).join('');
+
+  document.getElementById('mbg-curso').classList.add('open');
+}
+
+function closeCursoModal(){document.getElementById('mbg-curso').classList.remove('open');}
+
+function verificar(){
+  const id=document.getElementById('scan-id').value.trim();
+  const el=document.getElementById('scan-result');
+  if(!id){el.innerHTML='';return;}
+  const w=workers[id];
+  if(!w){el.innerHTML=`<div class="sresult sr-fail"><div class="sr-icon">✕</div><div class="sr-status">NO AUTORIZADO</div><p style="font-size:13px;color:var(--tx3);margin-top:10px">ID <code>${id}</code> no registrado</p></div>`;return;}
+  const ok=Object.entries(w.courses).filter(([,d])=>d.status==='Autorizado');
+  const venc=Object.entries(w.courses).filter(([,d])=>d.status==='Vencido');
+  const has=ok.length>0;
+  const allC=Object.entries(w.courses);
+  el.innerHTML=`<div class="sresult ${has?'sr-ok':'sr-fail'}">
+    <div class="sr-name" style="font-size:18px">${w.name}</div>
+    <div class="sr-cargo">${w.cargo||''} · ${w.id}</div>
+    ${allC.length?`<div class="sr-list">
+      <table style="width:100%;border-collapse:collapse;font-size:12px">
+        <thead><tr>
+          <th style="text-align:left;padding:5px 4px;font-size:10px;color:var(--tx3);font-family:var(--mono);text-transform:uppercase;border-bottom:1px solid var(--bd)">Habilitación</th>
+          <th style="text-align:left;padding:5px 4px;font-size:10px;color:var(--tx3);font-family:var(--mono);text-transform:uppercase;border-bottom:1px solid var(--bd)">Válido hasta</th>
+          <th style="text-align:left;padding:5px 4px;font-size:10px;color:var(--tx3);font-family:var(--mono);text-transform:uppercase;border-bottom:1px solid var(--bd)">Estatus</th>
+        </tr></thead>
+        <tbody>${allC.map(([c,d])=>{
+          const isOk=d.status==='Autorizado';
+          return `<tr style="border-bottom:1px solid var(--bd)">
+            <td style="padding:6px 4px;font-family:var(--mono);font-size:11px">${c}</td>
+            <td style="padding:6px 4px;font-size:11px;color:var(--tx2)">${d.valido_hasta||'—'}</td>
+            <td style="padding:6px 4px"><span style="display:inline-block;padding:2px 8px;border-radius:20px;font-size:10px;font-weight:500;background:${isOk?'var(--gn-bg)':'var(--rd-bg)'};color:${isOk?'var(--gn)':'var(--rd)'};border:1px solid ${isOk?'var(--gn-bd)':'var(--rd-bd)'}">${d.status}</span></td>
+          </tr>`;
+        }).join('')}</tbody>
+      </table>
+    </div>`:`<p style="font-size:12px;color:var(--tx3);margin-top:12px">No tiene habilitaciones registradas.</p>`}
+  </div>`;
+}
+
+function printQR(id){
+  const w=workers[id];if(!w) return;
+  const url=location.origin+location.pathname+'?sede='+SEDE+'&id='+w.id;
+  const sedeLabel=SEDE==='linings'?'Lima Linings':'Bradken Chilca';
+  const win=window.open('','_blank');
+  win.document.write(`<!DOCTYPE html><html><head><title>QR ${w.name}</title><script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"><\/script><style>@page{size:5cm 5.5cm;margin:1mm}*{box-sizing:border-box;margin:0;padding:0}body{display:flex;align-items:center;justify-content:center;min-height:100vh;background:#fff;font-family:Arial,sans-serif}.s{width:4.5cm;border:.4px solid #ddd;padding:6px;text-align:center;border-radius:3px}.nm{font-size:7.5px;font-weight:bold;margin-top:4px;line-height:1.3}.cg{font-size:6px;color:#777;margin-top:1px}.id{font-size:6px;color:#aaa;font-family:monospace;margin-top:1px}.br{font-size:6px;color:#bbb;margin-top:2px;text-transform:uppercase;letter-spacing:.04em}</style></head><body><div class="s"><div id="q" style="display:flex;justify-content:center"></div><div class="nm">${w.name}</div><div class="cg">${w.cargo||''}</div><div class="id">ID: ${w.id}</div><div class="br">${sedeLabel}</div></div><script>new QRCode(document.getElementById('q'),{text:'${url}',width:144,height:144,colorDark:'#000',colorLight:'#fff'});setTimeout(()=>window.print(),900);<\/script></body></html>`);
+  win.document.close();
+}
+
+function printAll(){
+  const ws=Object.values(workers);
+  if(!ws.length){toast('Sin trabajadores cargados','warn');return;}
+  const base=location.origin+location.pathname+'?sede='+SEDE;
+  const sedeNombre=SEDE==='linings'?'Lima Linings':'Bradken Chilca';
+  const cards=ws.map(w=>`<div class="s"><div class="qwrap" id="q${w.id}"></div><div class="nm">${w.name}</div><div class="cg">${w.cargo||''}</div><div class="id">ID: ${w.id}</div><div class="br">${sedeNombre}</div></div>`).join('');
+  const win=window.open('','_blank');
+  win.document.write(`<!DOCTYPE html><html><head><title>QR Masivo ${sedeNombre}</title><script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"><\/script><style>@page{size:A4;margin:5mm}*{box-sizing:border-box;margin:0;padding:0}body{background:#fff;font-family:Arial,sans-serif}.grid{display:grid;grid-template-columns:repeat(5,1fr);gap:2.5mm;padding:3mm}.s{border:.4px solid #ccc;padding:5px;text-align:center;border-radius:3px;page-break-inside:avoid}.qwrap{display:flex;justify-content:center;align-items:center;width:100%}.nm{font-size:7px;font-weight:bold;margin-top:3px;line-height:1.3;text-align:center}.cg{font-size:6px;color:#777;margin-top:1px;text-align:center}.id{font-size:6px;color:#aaa;font-family:monospace;margin-top:1px;text-align:center}.br{font-size:5.5px;color:#bbb;margin-top:2px;text-transform:uppercase;letter-spacing:.04em;text-align:center}.qwrap img{display:block;margin:0 auto}.qwrap canvas{display:block;margin:0 auto}</style></head><body><div class="grid">${cards}</div><script>const d=${JSON.stringify(ws.map(w=>({id:w.id,u:base+'&id='+w.id,nm:w.name})))};d.forEach(x=>{const e=document.getElementById('q'+x.id);if(e)new QRCode(e,{text:x.u,width:76,height:76,colorDark:'#000',colorLight:'#fff'})});setTimeout(()=>window.print(),1800);<\/script></body></html>`);
+  win.document.close();
+}
+
+function printSelected(){
+  const ws=Array.from(selQR).map(id=>workers[id]).filter(Boolean);
+  if(!ws.length) return;
+  const base=location.origin+location.pathname+'?sede='+SEDE;
+  const sedeNombre=SEDE==='linings'?'Lima Linings':'Bradken Chilca';
+  const cards=ws.map(w=>`<div class="s"><div class="qwrap" id="q${w.id}"></div><div class="nm">${w.name}</div><div class="cg">${w.cargo||''}</div><div class="id">ID: ${w.id}</div><div class="br">${sedeNombre}</div></div>`).join('');
+  const win=window.open('','_blank');
+  win.document.write(`<!DOCTYPE html><html><head><title>QR Seleccionados</title><script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"><\/script><style>@page{size:A4;margin:7mm}*{box-sizing:border-box;margin:0;padding:0}body{background:#fff;font-family:Arial,sans-serif}.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:4mm;padding:4mm}.s{border:.4px solid #ccc;padding:6px;text-align:center;border-radius:3px}.qwrap{display:flex;justify-content:center;align-items:center;width:100%}.qwrap img{display:block;margin:0 auto}.qwrap canvas{display:block;margin:0 auto}.nm{font-size:8px;font-weight:bold;margin-top:3px;line-height:1.3;text-align:center}.cg{font-size:7px;color:#777;margin-top:1px;text-align:center}.id{font-size:7px;color:#aaa;font-family:monospace;margin-top:2px;text-align:center}.br{font-size:6px;color:#bbb;margin-top:2px;text-transform:uppercase;letter-spacing:.04em;text-align:center}</style></head><body><div class="grid">${cards}</div><script>const d=${JSON.stringify(ws.map(w=>({id:w.id,u:base+'?id='+w.id})))};d.forEach(x=>{const e=document.getElementById('q'+x.id);if(e)new QRCode(e,{text:x.u,width:94,height:94,colorDark:'#000',colorLight:'#fff'})});setTimeout(()=>window.print(),1200);<\/script></body></html>`);
+  win.document.close();
+}
+
+function saveConfig(){
+  CFG.clientId=document.getElementById('cfg-cid').value.trim();
+  CFG.sheetId=document.getElementById('cfg-sid').value.trim();
+  CFG.sheetName=document.getElementById('cfg-sname').value.trim()||'Chilca';
+  CFG.sheetNameLinings=document.getElementById('cfg-sname-linings').value.trim()||'Linings';
+  localStorage.setItem('bk-cfg',JSON.stringify(CFG));
+  initGoogle();
+  toast('Configuración guardada. Haz clic en Sincronizar.','ok');
+}
+
+const TITLES={panel:'Panel',personal:'Personal',qr:'Códigos QR',scanner:'Verificar autorización',carga:'Subir CSV',config:'Configuración'};
+function goTo(page){
+  currentPage=page;
+  document.querySelectorAll('.ni').forEach(n=>n.classList.remove('active'));
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  document.getElementById('p-'+page).classList.add('active');
+  document.querySelector(`.ni[data-page="${page}"]`)?.classList.add('active');
+  const sedeLabel=SEDE==='chilca'?'Chilca':'Lima Linings';
+  document.getElementById('ptitle').textContent=(TITLES[page]||page)+' — '+sedeLabel;
+
+  // Show/hide topbar buttons based on page
+  const authChip=document.getElementById('auth-chip');
+  const syncBtn=document.getElementById('sync-btn');
+  const qrBtn=document.getElementById('btn-qr-masivo');
+  if(authChip) authChip.style.display=page==='carga'?'flex':'none';
+  if(syncBtn) syncBtn.style.display=page==='carga'?'inline-flex':'none';
+  if(qrBtn) qrBtn.style.display=page==='qr'?'inline-flex':'none';
+
+  if(page==='panel') renderPanel();
+  if(page==='personal') renderPersonal();
+  if(page==='qr') renderQR();
+  if(page==='carga'){
+    document.getElementById('carga-warn').style.display=(!gUser&&CFG.sheetId)?'block':'none';
+    const lbl=document.getElementById('carga-sede-label');
+    if(lbl) lbl.textContent=SEDE==='linings'?'Lima Linings':'Chilca';
+    renderAuthChip();
+  }
+}
+
+function toast(msg,type='info'){
+  const C={ok:['var(--gn-bg)','var(--gn-bd)','var(--gn)'],warn:['var(--am-bg)','var(--am-bd)','var(--am)'],err:['var(--rd-bg)','var(--rd-bd)','var(--rd)'],info:['var(--ac-bg)','var(--ac-bd)','var(--ac)']};
+  const[bg,bd,color]=C[type]||C.info;
+  const el=document.createElement('div');
+  el.className='toast';
+  el.style.cssText=`background:${bg};border-color:${bd};color:${color}`;
+  el.textContent=msg;
+  document.body.appendChild(el);
+  setTimeout(()=>el.remove(),5000);
+}
+
+renderAuthChip();
+</script>
+</body>
+</html>
